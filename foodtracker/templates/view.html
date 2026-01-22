@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Food Tracker | View Details</title>
+
+    <link
+      href="https://fonts.googleapis.com/css?family=Oswald|Ubuntu:400,700"
+      rel="stylesheet"
+    />
+
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='bs/css/united.min.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='styles.css') }}"
+    />
+  </head>
+  <body>
+    <div class="container-fluid" id="wrapper">
+      <div class="row" id="homeJumbo">
+        <div class="overlay"></div>
+        <div class="col-lg-12">
+          <h1>
+            <a
+              href="{{ url_for('main.index') }}"
+              style="
+                border: 2px solid white;
+                border-radius: 5px;
+                padding: 5px 10px;
+                display: inline-block;
+              "
+              >FOOD TRACKER</a
+            >
+          </h1>
+
+          <div class="row t20">
+            <div class="col-lg-4 col-lg-offset-4">
+              <ul class="nav nav-pills nav-justified">
+                <li role="presentation" class="active">
+                  <a href="{{ url_for('main.index') }}" title="Home">Home</a>
+                </li>
+                <li role="presentation" class="active">
+                  <a
+                    href="{{ url_for('ai.ai_tracker_page') }}"
+                    title="AI Tracker"
+                    class="animated-border"
+                    >AI Tracker</a
+                  >
+                </li>
+                {%if current_user.id==1 %}
+                <li role="presentation">
+                  <a href="{{ url_for('main.add') }}" title="Add Food Item"
+                    >Add Food Item</a
+                  >
+                </li>
+                <li role="presentation">
+                  <a href="{{ url_for('main.admin') }}" title="Add Food Item"
+                    >Admin</a
+                  >
+                </li>
+                {%endif%} {% if current_user.is_authenticated %}
+                <li role="presentation" class="active">
+                  <a
+                    href="{{ url_for('dashboard.dashboard_page') }}"
+                    title="Add Food Item"
+                    >Dashboard</a
+                  >
+                </li>
+                <li role="presentation" class="active">
+                  <a href="{{ url_for('auth.logout') }}" title="Add Food Item"
+                    >Logout</a
+                  >
+                </li>
+                <div
+                  style="
+                    position: absolute;
+                    top: -39px;
+                    right: -364px;
+                    font-size: 16px;
+                    color: white;
+                  "
+                >
+                  <li role="presentation" class="navbar-username">
+                    <a>
+                      <span
+                        class="glyphicon glyphicon-user"
+                        aria-hidden="true"
+                        style="color: white"
+                      ></span>
+                      <span style="color: white"
+                        >{{ current_user.username }}</span
+                      >
+                    </a>
+                  </li>
+                </div>
+
+                {%else %}
+                <li role="presentation" class="active">
+                  <a href="{{ url_for('auth.login') }}" title="Add Food Item"
+                    >Login</a
+                  >
+                </li>
+                <li role="presentation" class="active">
+                  <a href="{{ url_for('auth.register') }}" title="Add Food Item"
+                    >Registration</a
+                  >
+                </li>
+                {%endif%}
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row t20">
+        <div class="col-lg-4 col-lg-offset-4">
+          <div class="panel panel-default">
+            <div class="panel-body">
+              <form
+                action="{{ url_for('main.add_food_to_log', log_id=log.id) }}"
+                method="POST"
+                role="form"
+              >
+                <div class="form-group">
+                  <label>Add Food</label>
+                  <div class="input-group">
+                    <select class="form-control" name="food-select">
+                      {% for food in foods %}
+                      <option value="{{ food.id }}">{{ food.name }}</option>
+                      {% endfor %}
+                    </select>
+                    <span class="input-group-btn">
+                      <button
+                        type="submit"
+                        class="btn btn-primary"
+                        id="add-btn"
+                      >
+                        <i class="glyphicon glyphicon-plus-sign"></i> Add Food
+                      </button>
+                    </span>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row t20">
+        <div class="col-lg-8 col-lg-offset-2">
+          <div class="panel panel-default">
+            <div class="panel-body">
+              <h3 class="lean-h text-black">
+                <i class="glyphicon glyphicon-calendar"></i> {{
+                log.date.strftime('%B %d, %Y') }}
+              </h3>
+
+              <div class="row">
+                <div class="col-lg-3">
+                  <h4 class="lean-h">
+                    Protein: &nbsp;<strong class="f25"
+                      >{{ totals['protein'] }}</strong
+                    >
+                  </h4>
+                </div>
+                <div class="col-lg-3">
+                  <h4 class="lean-h">
+                    Carbohydrates:
+                    <strong class="f25">{{ totals['carbs'] }}</strong>
+                  </h4>
+                </div>
+                <div class="col-lg-3">
+                  <h4 class="lean-h">
+                    Fat: <strong class="f25">{{ totals['fat'] }}</strong>
+                  </h4>
+                </div>
+                <div class="col-lg-3">
+                  <h4 class="lean-h">
+                    Calories:
+                    <strong class="f25">{{ totals['calories'] }}</strong>
+                  </h4>
+                </div>
+              </div>
+            </div>
+            <div class="table-responsive">
+              <table class="table table-striped table-hover table-bordered">
+                <thead>
+                  <tr>
+                    <th style="width: 5%">#</th>
+                    <th>Name</th>
+                    <th style="width: 10%">Protein</th>
+                    <th style="width: 16%">Carbohydrates</th>
+                    <th style="width: 10%">Fat</th>
+                    <th style="width: 12%">Calories</th>
+                    <th style="width: 15%">Time</th>
+                    <th style="width: 15%">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for log_food_item in log.log_food_items %}
+                  <tr>
+                    <td>{{ loop.index }}</td>
+                    <td>{{ log_food_item.food.name }}</td>
+                    <td>{{ log_food_item.food.proteins }}</td>
+                    <td>{{ log_food_item.food.carbs }}</td>
+                    <td>{{ log_food_item.food.fats }}</td>
+                    <td>{{ log_food_item.food.calories }}</td>
+                    <td>{{ log_food_item.timestamp.strftime('%H:%M') }}</td>
+                    <td>
+                      <a
+                        href="{{ url_for('main.remove_food_from_log', log_id=log.id, food_id=log_food_item.food.id) }}"
+                        class="btn btn-danger btn-xs"
+                      >
+                        <i class="glyphicon glyphicon-trash"></i> Delete
+                      </a>
+                    </td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="{{ url_for('static', filename='bs/js/jquery.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='bs/js/bootstrap.min.js') }}"></script>
+  </body>
+</html>

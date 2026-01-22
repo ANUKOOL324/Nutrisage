@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Tracker - Food Prediction</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='bs/css/united.min.css') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}" />
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f8f9fa; color: #333; }
+         .chart-container {
+            position: relative;
+            height: 400px; /* Fixed height for bar chart */
+            width: 100%;
+            padding: 15px;
+            box-sizing: border-box;
+        }
+        .chart-section {
+            background-color: #fff;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+            border: 1px solid #e9ecef;
+        }
+        .stat-item { text-align: center; padding: 10px; }
+        .stat-value { font-size: 1.8rem; font-weight: bold; color: #0d6efd; }
+        .stat-label { font-size: 1rem; color: #6c757d; }
+        .loading, .error { text-align: center; padding: 20px; font-size: 1.1em; }
+        .loading { color: #6c757d; }
+        .error { color: #dc3545; }
+
+        .chatbot-container {
+            background-color: #f0f2f5;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: inset 0 0 8px rgba(0,0,0,0.1);
+            height: 500px; /* Fixed height for chat window */
+            display: flex;
+            flex-direction: column;
+        }
+        .chat-messages {
+            flex-grow: 1;
+            overflow-y: auto;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 10px;
+            margin-bottom: 10px;
+        }
+            .animated-border {
+    position: relative;
+    overflow: hidden;
+}
+
+.animated-border::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, rgba(150, 255, 187, 0.8), transparent);
+    animation: borderSlide 3s linear infinite;
+}
+@keyframes borderSlide {
+    0% {
+        left: -100%;
+    }
+
+    100% {
+        left: 100%;
+    }
+}
+        .message {
+            padding: 8px 12px;
+            border-radius: 15px;
+            margin-bottom: 8px;
+            max-width: 80%;
+            word-wrap: break-word;
+        }
+        .message.user {
+            background-color: #0d6efd;
+            color: white;
+            margin-left: auto;
+            border-bottom-right-radius: 5px;
+        }
+        .message.bot {
+            background-color: #e9ecef;
+            color: #333;
+            margin-right: auto;
+            border-bottom-left-radius: 5px;
+        }
+        .chat-input-form {
+            display: flex;
+        }
+        .chat-input-form input {
+            flex-grow: 1;
+            padding: 10px;
+            border-radius: 20px;
+            border: 1px solid #e0e0e0;
+            margin-right: 10px;
+        }
+        .chat-input-form button {
+            border-radius: 20px;
+            padding: 10px 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid" id="wrapper">
+			
+			<div class="row" id="homeJumbo">
+				<div class="overlay"></div>
+				<div class="col-lg-12">
+					<h1>
+						<a href="{{ url_for('main.index') }}" style="border: 2px solid white; border-radius: 5px; padding: 5px 10px; display: inline-block;">AI TRACKER</a>
+					</h1>
+					
+					<div class="row t20">
+						<div class="col-lg-4 col-lg-offset-4">
+							<ul class="nav nav-pills nav-justified">
+							  <li role="presentation" class="active">
+							  	<a href="{{ url_for('main.index') }}" title="Home">Home</a>
+							  </li>
+							  <li role="presentation" class='active'>
+                               <a href="{{ url_for('ai.ai_tracker_page') }}" title="AI Tracker" class="animated-border">AI Tracker</a>
+                               </li>
+							  {%if current_user.id==1 %}
+							  <li role="presentation">
+							  	<a href="{{ url_for('main.add') }}" title="Add Food Item">Add Food Item</a>
+							  </li>
+							  <li role="presentation">
+							  	<a href="{{ url_for('main.admin') }}" title="Add Food Item">Admin</a>
+							  </li>
+							  {%endif%}
+							  {% if current_user.is_authenticated %}
+							  <li role="presentation" class='active'>
+							  	<a href="{{ url_for('dashboard.dashboard_page') }}" title="Add Food Item">Dashboard</a>
+							  </li>
+							  <li role="presentation" class='active'>
+							  	<a href="{{ url_for('auth.logout') }}" title="Add Food Item">Logout</a>
+							  </li>
+                              <div style="position: absolute; top: -39px;
+    right: -364px; font-size: 16px; color: white;">
+    <li role="presentation" class="navbar-username">
+        <a>
+            <span class="glyphicon glyphicon-user" aria-hidden="true" style="color: white;"></span>
+           <span style="color:white">{{ current_user.username }}</span>
+        </a>
+    </li>
+</div>
+							  {%else %}
+							  <li role="presentation" class='active'>
+							  	<a href="{{ url_for('auth.login') }}" title="Add Food Item">Login</a>
+							  </li>
+							  <li role="presentation" class='active'>
+							  	<a href="{{ url_for('auth.register') }}" title="Add Food Item">Registration</a>
+							  </li>
+							  {%endif%}
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+        <div class="container">
+            <h1 class="text-center my-4">AI Tracker & Prediction</h1>
+
+            <div class="row">
+                <div class="col-lg-6 mb-4">
+                    <div class="chart-section">
+                        <h3 class="text-center mb-4">Daily Calorie Prediction</h3>
+                        <div id="prediction-results-container" class="text-center">
+                            <div class="loading" id="prediction-loading-message">Loading prediction...</div>
+                            <div class="error" id="prediction-error-message" style="display: none;"></div>
+                            <div id="prediction-content" style="display: none;">
+                                <div class="row text-center my-3">
+                                    <div class="col-md-6 mb-3">
+                                        <div class="stat-item">
+                                            <div class="stat-value" id="ml-predicted-total">--</div>
+                                            <div class="stat-label">Predicted Total (kcal)</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <div class="stat-item">
+                                            <div class="stat-value" id="ml-prediction-status">--</div>
+                                            <div class="stat-label">Prediction Status</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <p class="text-center text-muted mt-3"><small>This prediction will update based on your logged food.</small></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-6 mb-4">
+                    <div class="chart-section">
+                        <h3 class="text-center mb-4">Medical Chatbot</h3>
+                        <div class="chatbot-container">
+                            <div class="chat-messages" id="chat-messages">
+                                <div class="message bot">Hello! I'm your Medical Chatbot. How can I help you today?</div>
+                            </div>
+                            <form class="chat-input-form" id="chat-input-form">
+                                <input type="text" id="user-chat-input" placeholder="Ask me about medical info...">
+                                <button type="submit" class="btn btn-primary">Send</button>
+                            </form>
+                        </div>
+                        <p class="text-center text-muted mt-3"><small>This is RAG based Medical ChatBot Using Pincone Vector Database .</small></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <div class="row pad">
+                <div class="col-lg-12 text-center">
+                    Copyright &copy; 2025 <strong>Nutrisage</strong>
+                </div>
+            </div>
+        </footer>
+
+    </div>
+
+    <script src="{{ url_for('static', filename='bs/js/jquery.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='bs/js/bootstrap.min.js') }}"></script>
+
+    <script>
+   
+    const API_BASE = '/ai-tracker';
+   
+    
+    const CHATBOT_API_URL = 'http://127.0.0.1:5001/chat';
+
+    
+    function showContent(containerId, contentIdToShow) {
+        const container = document.getElementById(containerId);
+        if (!container) return;
+        const allContentDivs = container.querySelectorAll('.loading, .error, #prediction-content');
+        allContentDivs.forEach(div => div.style.display = 'none');
+        const contentToShow = document.getElementById(contentIdToShow);
+        if (contentToShow) {
+            contentToShow.style.display = 'block';
+        }
+    }
+
+    function showLoadingPrediction(containerId, message = 'Loading prediction...') {
+        showContent(containerId, 'prediction-loading-message');
+        document.getElementById('prediction-loading-message').textContent = message;
+    }
+
+    function showErrorPrediction(containerId, message) {
+        showContent(containerId, 'prediction-error-message');
+        document.getElementById('prediction-error-message').innerHTML = `Error: ${message}<br><small>Please try refreshing the page</small>`;
+    }
+
+   
+    async function fetchDailyCaloriePrediction() {
+        showLoadingPrediction('prediction-results-container');
+        try {
+            const response = await fetch(`${API_BASE}/predict_calories`);
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+            }
+            const data = await response.json();
+            document.getElementById('ml-predicted-total').textContent = Math.round(data.predicted_total_calories);
+            document.getElementById('ml-prediction-status').textContent = data.prediction_status;
+            const statusElement = document.getElementById('ml-prediction-status');
+            statusElement.style.color = '';
+            if (data.prediction_status.includes('Exceed')) {
+                statusElement.style.color = '#dc3545';
+            } else if (data.prediction_status.includes('Below')) {
+                statusElement.style.color = '#ffc107';
+            } else if (data.prediction_status.includes('Track')) {
+                statusElement.style.color = '#28a745';
+            }
+            showContent('prediction-results-container', 'prediction-content');
+        } catch (error) {
+            console.error("Error fetching daily calorie prediction:", error);
+            showErrorPrediction('prediction-results-container', 'Failed to load prediction');
+        }
+    }
+
+    
+    async function sendChatMessage(event) {
+        event.preventDefault();
+        const userInputElement = document.getElementById('user-chat-input');
+        const userMessage = userInputElement.value.trim();
+        if (!userMessage) return;
+
+        appendMessage('user', userMessage);
+        userInputElement.value = ''; 
+        appendMessage('bot', 'Thinking...'); 
+
+        try {
+            
+            const response = await fetch(CHATBOT_API_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                
+                body: JSON.stringify({
+                    message: userMessage
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+            }
+
+            const botResponseData = await response.json();
+
+            
+            const messagesContainer = document.getElementById('chat-messages');
+            if (messagesContainer.lastChild.textContent === 'Thinking...') {
+                messagesContainer.removeChild(messagesContainer.lastChild);
+            }
+
+            
+            appendMessage('bot', botResponseData.response);
+
+        } catch (error) {
+            console.error("Chatbot API error:", error);
+            
+            const messagesContainer = document.getElementById('chat-messages');
+            if (messagesContainer.lastChild.textContent === 'Thinking...') {
+                messagesContainer.lastChild.textContent = 'Error connecting to the chatbot. Please try again later.';
+            } else {
+                 appendMessage('bot', 'Error connecting to the chatbot. Please try again later.');
+            }
+        }
+    }
+
+    function appendMessage(sender, text) {
+        const messagesContainer = document.getElementById('chat-messages');
+        const messageDiv = document.createElement('div');
+        messageDiv.classList.add('message', sender);
+        messageDiv.textContent = text;
+        messagesContainer.appendChild(messageDiv);
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }
+
+    
+    document.addEventListener('DOMContentLoaded', function() {
+        fetchDailyCaloriePrediction();
+        document.getElementById('chat-input-form').addEventListener('submit', sendChatMessage);
+    });
+</script>
+</body>
+</html>

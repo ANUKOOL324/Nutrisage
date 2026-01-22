@@ -1,0 +1,15 @@
+Flask>=2.3.0                
+Flask-SQLAlchemy>=3.0.0      
+Flask-Migrate>=4.1.0        
+Flask-Login>=0.6.2           
+
+
+Werkzeug
+SQLAlchemy
+Jinja2
+itsdangerous
+MarkupSafe
+click
+python-dotenv
+
+

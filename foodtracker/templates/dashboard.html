@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Food Tracker Dashboard</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='bs/css/bootstrap.min.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='styles.css') }}"
+    />
+
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        background-color: #f4f7f6;
+        color: #333;
+      }
+
+      .container-fluid {
+        padding-right: 15px;
+        padding-left: 15px;
+        margin-right: auto;
+        margin-left: auto;
+      }
+      .navbar {
+        margin-bottom: 20px;
+      }
+      .chart-section {
+        background-color: #fff;
+        padding: 25px;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        margin-bottom: 30px;
+      }
+      h2,
+      h3 {
+        text-align: center;
+        color: #555;
+        margin-bottom: 20px;
+      }
+      .chart-container {
+        position: relative;
+        height: 400px; /* Fixed height for bar chart */
+        width: 100%;
+        padding: 15px;
+        box-sizing: border-box;
+      }
+      .doughnut-chart-container {
+        position: relative;
+        height: 300px; /* Fixed height for doughnut chart */
+        width: 50%; /* Adjust width for doughnut chart */
+        margin: 0 auto; /* Center the doughnut chart */
+        padding: 15px;
+        box-sizing: border-box;
+      }
+      .controls {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        margin-bottom: 15px;
+      }
+      .controls select,
+      .controls button {
+        padding: 8px 12px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        background-color: #f9f9f9;
+        cursor: pointer;
+      }
+      .controls button {
+        background-color: #007bff;
+        color: white;
+        border-color: #007bff;
+      }
+      .controls button:hover {
+        background-color: #0056b3;
+      }
+      .flash-messages {
+        margin-bottom: 15px;
+        text-align: center;
+      }
+      .alert {
+        padding: 15px;
+        margin-bottom: 20px;
+        border: 1px solid transparent;
+        border-radius: 4px;
+      }
+      .alert-success {
+        color: #3c763d;
+        background-color: #dff0d8;
+        border-color: #d6e9c6;
+      }
+      .alert-danger {
+        color: #a94442;
+        background-color: #f2dede;
+        border-color: #ebccd1;
+      }
+      .alert-warning {
+        color: #8a6d3b;
+        background-color: #fcf8e3;
+        border-color: #faebcc;
+      }
+      .alert-info {
+        color: #31708f;
+        background-color: #d9edf7;
+        border-color: #bce8f1;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container-fluid" id="wrapper">
+      <div class="row" id="homeJumbo">
+        <div class="overlay"></div>
+        <div class="col-lg-12">
+          <h1>
+            <a
+              href="{{ url_for('main.index') }}"
+              style="
+                border: 2px solid white;
+                border-radius: 5px;
+                padding: 5px 10px;
+                display: inline-block;
+              "
+              >DASHBOARD</a
+            >
+          </h1>
+
+          <div class="row t20">
+            <div class="col-lg-4 col-lg-offset-4">
+              <ul class="nav nav-pills nav-justified">
+                <li role="presentation" class="active">
+                  <a href="{{ url_for('main.index') }}" title="Home">Home</a>
+                </li>
+                <li role="presentation" class="active">
+                  <a
+                    href="{{ url_for('ai.ai_tracker_page') }}"
+                    title="AI Tracker"
+                    class="animated-border"
+                    >AI Tracker</a
+                  >
+                </li>
+                {%if current_user.id==1 %}
+                <li role="presentation">
+                  <a href="{{ url_for('main.add') }}" title="Add Food Item"
+                    >Add Food Item</a
+                  >
+                </li>
+                <li role="presentation">
+                  <a href="{{ url_for('main.admin') }}" title="Add Food Item"
+                    >Admin</a
+                  >
+                </li>
+                {%endif%} {% if current_user.is_authenticated %}
+                <li role="presentation" class="active">
+                  <a
+                    href="{{ url_for('dashboard.dashboard_page') }}"
+                    title="Add Food Item"
+                    >Dashboard</a
+                  >
+                </li>
+                <li role="presentation" class="active">
+                  <a href="{{ url_for('auth.logout') }}" title="Add Food Item"
+                    >Logout</a
+                  >
+                </li>
+                <div
+                  style="
+                    position: absolute;
+                    top: -39px;
+                    right: -364px;
+                    font-size: 16px;
+                    color: white;
+                  "
+                >
+                  <li role="presentation" class="navbar-username">
+                    <a>
+                      <span
+                        class="glyphicon glyphicon-user"
+                        aria-hidden="true"
+                        style="color: white"
+                      ></span>
+                      <span style="color: white"
+                        >{{ current_user.username }}</span
+                      >
+                    </a>
+                  </li>
+                </div>
+
+                {%else %}
+                <li role="presentation" class="active">
+                  <a href="{{ url_for('auth.login') }}" title="Add Food Item"
+                    >Login</a
+                  >
+                </li>
+                <li role="presentation" class="active">
+                  <a href="{{ url_for('auth.register') }}" title="Add Food Item"
+                    >Registration</a
+                  >
+                </li>
+                {%endif%}
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <h1 class="my-4 text-center"></h1>
+
+      <div class="row">
+        <div class="col-lg-6">
+          <div class="chart-section">
+            <h3>Energy Summary Today</h3>
+            <div class="doughnut-chart-container">
+              <canvas id="energySummaryChart"></canvas>
+            </div>
+            <div class="text-center mt-3">
+              <p>
+                <strong>Target:</strong>
+                <span id="summary-target-kcal">0</span> kcal
+              </p>
+              <p>
+                <strong>Consumed:</strong>
+                <span id="summary-consumed-kcal">0</span> kcal
+              </p>
+              <p>
+                <strong>Remaining:</strong>
+                <span id="summary-remaining-kcal">0</span> kcal
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <div class="chart-section">
+            <h3>Today's Macronutrient Breakdown</h3>
+            <div class="doughnut-chart-container">
+              <canvas id="macroSummaryChart"></canvas>
+            </div>
+            <div class="text-center mt-3">
+              <p>
+                <strong>Protein:</strong> <span id="summary-protein">0</span>g /
+                <span id="summary-protein-target">0</span>g
+              </p>
+              <p>
+                <strong>Carbs:</strong> <span id="summary-carbs">0</span>g /
+                <span id="summary-carbs-target">0</span>g
+              </p>
+              <p>
+                <strong>Fat:</strong> <span id="summary-fat">0</span>g /
+                <span id="summary-fat-target">0</span>g
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-lg-12">
+          <div class="chart-section">
+            <h3>Daily Calories Consumed (Last 3 Weeks)</h3>
+            <div class="controls">
+              <select id="timeRangeSelect">
+                <option value="3weeks">Last 3 weeks</option>
+                <option value="4weeks">Last 4 weeks</option>
+                <option value="lastmonth">Last Month</option>
+              </select>
+              <select id="dayTypeSelect">
+                <option value="all">All Days</option>
+                <option value="weekdays">Weekdays</option>
+                <option value="weekends">Weekends</option>
+              </select>
+              <select id="unitSelect">
+                <option value="kcal">kcal</option>
+                <option value="g">grams</option>
+              </select>
+              <button title="More Options">•••</button>
+            </div>
+            <div class="chart-container">
+              <canvas id="caloriesChart"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <footer>
+        <div class="row pad">
+          <div class="col-lg-12 text-center">
+            Copyright &copy; 2025 <strong>Nutrisage</strong>
+          </div>
+        </div>
+      </footer>
+    </div>
+
+    <!-- jQuery -->
+    <script src="{{ url_for('static', filename='bs/js/jquery.min.js') }}"></script>
+    <!-- Bootstrap JavaScript -->
+    <script src="{{ url_for('static', filename='bs/js/bootstrap.min.js') }}"></script>
+
+    <!--i have don't use different js file because it was easy for me to check mistakes here-->
+    <script>
+      let caloriesChartInstance = null;
+      let energySummaryChartInstance = null;
+      let macroSummaryChartInstance = null;
+
+      async function fetchAndRenderCaloriesChart() {
+        try {
+          const response = await fetch("/dashboard/calories_chart_data");
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          const data = await response.json();
+
+          const ctx = document.getElementById("caloriesChart").getContext("2d");
+
+          if (caloriesChartInstance) {
+            caloriesChartInstance.destroy();
+          }
+
+          const datasets = data.datasets.map((dataset) => ({
+            label: dataset.label,
+            backgroundColor: dataset.backgroundColor,
+            data: dataset.data,
+          }));
+
+          caloriesChartInstance = new Chart(ctx, {
+            type: "bar",
+            data: {
+              labels: data.labels,
+              datasets: datasets,
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              scales: {
+                x: {
+                  stacked: true,
+                  title: {
+                    display: true,
+                    text: "Date",
+                  },
+                },
+                y: {
+                  stacked: true,
+                  beginAtZero: true,
+                  max: 3000,
+                  title: {
+                    display: true,
+                    text: "Energy (kcal)",
+                  },
+                },
+              },
+              plugins: {
+                legend: {
+                  position: "bottom",
+                  labels: {
+                    usePointStyle: true,
+                  },
+                },
+                tooltip: {
+                  mode: "index",
+                  intersect: false,
+                  callbacks: {
+                    label: function (context) {
+                      let label = context.dataset.label || "";
+                      if (label) {
+                        label += ": ";
+                      }
+                      if (context.parsed.y !== null) {
+                        label += context.parsed.y + " kcal";
+                      }
+                      return label;
+                    },
+                  },
+                },
+              },
+            },
+          });
+        } catch (error) {
+          console.error("Error fetching or rendering calories chart:", error);
+          const chartContainer =
+            document.getElementById("caloriesChart").parentNode;
+          chartContainer.innerHTML =
+            '<p style="text-align: center; color: red;">Failed to load chart data.</p>';
+        }
+      }
+
+      async function fetchAndRenderEnergySummaryChart() {
+        try {
+          const response = await fetch("/dashboard/summary_chart_data");
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          const data = await response.json();
+
+          const ctx = document
+            .getElementById("energySummaryChart")
+            .getContext("2d");
+
+          if (energySummaryChartInstance) {
+            energySummaryChartInstance.destroy();
+          }
+
+          const consumed = data.consumed_calories;
+          const target = data.target_calories;
+          const remaining = data.remaining_calories;
+
+          document.getElementById("summary-target-kcal").innerText = target;
+          document.getElementById("summary-consumed-kcal").innerText = consumed;
+          document.getElementById("summary-remaining-kcal").innerText =
+            remaining;
+
+          energySummaryChartInstance = new Chart(ctx, {
+            type: "doughnut",
+            data: {
+              labels: ["Consumed", "Remaining"],
+              datasets: [
+                {
+                  data: [consumed, remaining],
+                  backgroundColor: ["#FDD835", "#B0BEC5"],
+                  hoverOffset: 4,
+                },
+              ],
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              cutout: "80%",
+              plugins: {
+                legend: {
+                  position: "bottom",
+                },
+                tooltip: {
+                  callbacks: {
+                    label: function (context) {
+                      let label = context.label || "";
+                      if (label) {
+                        label += ": ";
+                      }
+                      if (context.parsed) {
+                        label += context.parsed + " kcal";
+                      }
+                      return label;
+                    },
+                  },
+                },
+              },
+            },
+          });
+        } catch (error) {
+          console.error(
+            "Error fetching or rendering energy summary chart:",
+            error
+          );
+          const chartContainer =
+            document.getElementById("energySummaryChart").parentNode;
+          chartContainer.innerHTML =
+            '<p style="text-align: center; color: red;">Failed to load summary data.</p>';
+        }
+      }
+
+      async function fetchAndRenderMacroSummaryChart() {
+        try {
+          const response = await fetch("/dashboard/summary_chart_data");
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          const data = await response.json();
+
+          const ctx = document
+            .getElementById("macroSummaryChart")
+            .getContext("2d");
+
+          if (macroSummaryChartInstance) {
+            macroSummaryChartInstance.destroy();
+          }
+
+          const proteinConsumed = data.consumed_protein;
+          const proteinTarget = data.target_protein;
+          const carbsConsumed = data.consumed_carbs;
+          const carbsTarget = data.target_carbs;
+          const fatConsumed = data.consumed_fat;
+          const fatTarget = data.target_fat;
+
+          document.getElementById("summary-protein").innerText =
+            proteinConsumed;
+          document.getElementById("summary-protein-target").innerText =
+            proteinTarget;
+          document.getElementById("summary-carbs").innerText = carbsConsumed;
+          document.getElementById("summary-carbs-target").innerText =
+            carbsTarget;
+          document.getElementById("summary-fat").innerText = fatConsumed;
+          document.getElementById("summary-fat-target").innerText = fatTarget;
+
+          macroSummaryChartInstance = new Chart(ctx, {
+            type: "doughnut",
+            data: {
+              labels: [
+                "Protein Consumed",
+                "Carbs Consumed",
+                "Fat Consumed",
+                "Protein Remaining",
+                "Carbs Remaining",
+                "Fat Remaining",
+              ],
+              datasets: [
+                {
+                  data: [
+                    proteinConsumed,
+                    carbsConsumed,
+                    fatConsumed,
+                    Math.max(0, proteinTarget - proteinConsumed),
+                    Math.max(0, carbsTarget - carbsConsumed),
+                    Math.max(0, fatTarget - fatConsumed),
+                  ],
+                  backgroundColor: [
+                    "#8BC34A",
+                    "#03A9F4",
+                    "#FF5722",
+                    "#C8E6C9",
+                    "#B3E5FC",
+                    "#FFCCBC",
+                  ],
+                  hoverOffset: 4,
+                },
+              ],
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              cutout: "80%",
+              plugins: {
+                legend: {
+                  position: "bottom",
+                },
+                tooltip: {
+                  callbacks: {
+                    label: function (context) {
+                      let label = context.label || "";
+                      if (label) {
+                        label += ": ";
+                      }
+                      if (context.parsed) {
+                        label += context.parsed + " g";
+                      }
+                      return label;
+                    },
+                  },
+                },
+              },
+            },
+          });
+        } catch (error) {
+          console.error(
+            "Error fetching or rendering macro summary chart:",
+            error
+          );
+          const chartContainer =
+            document.getElementById("macroSummaryChart").parentNode;
+          chartContainer.innerHTML =
+            '<p style="text-align: center; color: red;">Failed to load macro summary data.</p>';
+        }
+      }
+      document.addEventListener("DOMContentLoaded", () => {
+        fetchAndRenderCaloriesChart();
+        fetchAndRenderEnergySummaryChart();
+        fetchAndRenderMacroSummaryChart();
+      });
+    </script>
+  </body>
+</html>
