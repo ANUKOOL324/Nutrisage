@@ -8,7 +8,11 @@ from .ai.routes import load_ai_prediction_model
 
 def create_app():
     app = Flask(__name__)
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite3'
+    if 'PYTHONANYWHERE_DOMAIN' in os.environ:
+        app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://ANUKOOL324:your_mysql_password@ANUKOOL324.mysql.pythonanywhere-services.com/ANUKOOL324$Nutrisage'
+    else:
+        app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite3'
+
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config['SECRET_KEY'] = 'my_strong_secret_key_here_anukoolbhul'
 
@@ -16,6 +20,7 @@ def create_app():
 
     db.init_app(app)
     migrate = Migrate(app, db)
+    
     login_manager = LoginManager()
     login_manager.init_app(app)
     login_manager.login_view = 'auth.login'
@@ -28,8 +33,9 @@ def create_app():
     app.register_blueprint(main)
     from .auth.routes import auth_bp
     app.register_blueprint(auth_bp)
+    
     from .dashboard import bp_dashboard
-    app.register_blueprint(bp_dashboard , url_prefix='/dashboard')
+    app.register_blueprint(bp_dashboard, url_prefix='/dashboard')
     
     from .ai import bp_ai_tracker
     app.register_blueprint(bp_ai_tracker, url_prefix='/ai-tracker') 
