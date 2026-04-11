@@ -1,459 +1,181 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+<head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Nutrisage Login</title>
+    <title>Nutrisage | Login</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
     <style>
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
-
-      html,
-      body {
-        height: 100%;
-        overflow: hidden; /* Prevents scrollbars on the page */
-      }
-
-      .main-container {
-        display: flex;
-        width: 100vw;
-        height: 100vh;
-      }
-
-      .info-panel,
-      .login-panel {
-        flex: 1; /* Each panel takes up 50% of the width */
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100%;
-        padding: 40px;
-      }
-
-      /* --- Left Panel: Info and Animation Styles --- */
-      .info-panel {
-        background-color: #000;
-        color: #fff;
-        flex-direction: column; /* Stack animation, title, and quote vertically */
-        text-align: center;
-        font-family: "Garamond", serif;
-      }
-
-      .circle-container {
-        position: relative;
-        width: 180px;
-        height: 180px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        margin-bottom: 20px; /* Space between animation and title */
-      }
-
-      .info-panel h1 {
-        font-size: 4rem;
-        color: #87ceeb; /* Light Sky Blue */
-        margin-bottom: 20px;
-      }
-
-      .info-panel .quote {
-        font-size: 1.2rem;
-        font-style: italic;
-        max-width: 80%;
-        color: #ccc;
-        line-height: 1.6;
-      }
-
-      /* --- Right Panel: Grid Background and Form Styles --- */
-      .login-panel {
-        background-color: #f4f7f6;
-        background-image: linear-gradient(
-            rgba(0, 0, 0, 0.08) 1px,
-            transparent 1px
-          ),
-          linear-gradient(90deg, rgba(0, 0, 0, 0.08) 1px, transparent 1px);
-        background-size: 20px 20px;
-        font-family: Arial, sans-serif;
-        perspective: 1000px; /* Add perspective for 3D effect */
-      }
-
-      /* --- Flipper Styles --- */
-      .flipper-container {
-        width: 100%;
-        max-width: 400px;
-        height: 510px; /* Adjusted height for the register form */
-      }
-
-      .flipper {
-        position: relative;
-        width: 100%;
-        height: 100%;
-        transition: transform 0.8s;
-        transform-style: preserve-3d;
-      }
-
-      .flipper.is-flipped {
-        transform: rotateY(180deg);
-      }
-
-      .form-container {
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        -webkit-backface-visibility: hidden; /* Safari */
-        backface-visibility: hidden;
-
-        background-color: #fff;
-        padding: 30px 40px;
-        border-radius: 8px;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-      }
-
-      /* Position the back of the card */
-      .register-form {
-        transform: rotateY(180deg);
-      }
-
-      /* --- Flash Messages Styles --- */
-      .flash-messages {
-        margin-bottom: 15px;
-        text-align: center;
-      }
-
-      .flash-messages .danger {
-        color: #dc3545;
-        background-color: #f8d7da;
-        border: 1px solid #f5c6cb;
-        padding: 8px;
-        border-radius: 4px;
-        margin-bottom: 5px;
-      }
-
-      .flash-messages .success {
-        color: #155724;
-        background-color: #d4edda;
-        border: 1px solid #c3e6cb;
-        padding: 8px;
-        border-radius: 4px;
-        margin-bottom: 5px;
-      }
-
-      /* --- Shared Form Element Styles --- */
-      .form-container h2 {
-        text-align: center;
-        margin-bottom: 25px;
-        color: #333;
-        font-size: 24px;
-      }
-
-      .form-group {
-        margin-bottom: 20px;
-      }
-
-      .form-group label {
-        display: block;
-        margin-bottom: 5px;
-        font-weight: bold;
-        color: #555;
-      }
-
-      .form-group input {
-        width: 100%;
-        padding: 12px;
-        border: 1px solid #ddd;
-        border-radius: 4px;
-        font-size: 16px;
-        box-sizing: border-box;
-      }
-
-      .btn-submit {
-        width: 100%;
-        padding: 12px;
-        background-color: #007bff;
-        color: white;
-        border: none;
-        border-radius: 4px;
-        font-size: 16px;
-        cursor: pointer;
-        transition: background-color 0.3s ease;
-      }
-
-      .btn-submit:hover {
-        background-color: #0056b3;
-      }
-
-      .link-text {
-        text-align: center;
-        margin-top: 20px;
-        font-size: 14px;
-      }
-
-      .link-text a {
-        color: #007bff;
-        text-decoration: none;
-        cursor: pointer;
-      }
-
-      .link-text a:hover {
-        text-decoration: underline;
-      }
-
-      /* --- Responsive Design --- */
-      @media (max-width: 768px) {
-        .main-container {
-          flex-direction: column;
-        }
-        .info-panel {
-          min-height: 40vh;
-          padding: 20px;
-        }
-        .info-panel h1 {
-          font-size: 3rem;
-        }
-        .info-panel .quote {
-          font-size: 1rem;
-        }
-        .login-panel {
-          min-height: 60vh;
-        }
-      }
-      .animated-border {
-        position: relative;
-        overflow: hidden;
-      }
-
-      .animated-border::before {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 2px;
-        background: linear-gradient(
-          90deg,
-          transparent,
-          rgba(150, 255, 187, 0.8),
-          transparent
-        );
-        animation: borderSlide 3s linear infinite;
-      }
-      @keyframes borderSlide {
-        0% {
-          left: -100%;
+        :root {
+            --primary: #10b981; /* Emerald Green */
+            --primary-glow: rgba(16, 185, 129, 0.3);
+            --bg-dark: #050505;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --grid-color: rgba(16, 185, 129, 0.08);
+            --glass-border: rgba(255, 255, 255, 0.08);
         }
 
-        100% {
-          left: 100%;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-      }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-image: 
+                linear-gradient(var(--grid-color) 1px, transparent 1px),
+                linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
+            background-size: 50px 50px;
+            background-position: center center;
+        }
+
+        .auth-container {
+            width: 100%;
+            max-width: 420px;
+            padding: 40px;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        .logo-text {
+            font-family: 'Instrument Serif', serif;
+            font-size: 2.5rem;
+            color: #fff;
+            text-align: center;
+            margin-bottom: 8px;
+            text-decoration: none;
+            display: block;
+        }
+
+        .sub-heading {
+            text-align: center;
+            color: var(--text-muted);
+            margin-bottom: 32px;
+            font-size: 0.95rem;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 8px;
+            color: var(--text-muted);
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 14px 16px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            color: #fff;
+            font-family: inherit;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 0 0 4px var(--primary-glow);
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 16px;
+            background: var(--primary);
+            color: #000;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px var(--primary-glow);
+            filter: brightness(1.1);
+        }
+
+        .toggle-text {
+            text-align: center;
+            margin-top: 24px;
+            font-size: 0.95rem;
+            color: var(--text-muted);
+        }
+
+        .toggle-text a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s;
+        }
+        
+        .toggle-text a:hover {
+            color: #fff;
+        }
+
+        .flash-msg {
+            padding: 12px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+            text-align: center;
+        }
+        .flash-msg.danger { background: rgba(239, 68, 68, 0.1); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.2); }
+        .flash-msg.success { background: rgba(16, 185, 129, 0.1); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.2); }
     </style>
-  </head>
-  <body>
-    <div class="main-container">
-      <div class="info-panel">
-        <div id="sequential-pulse" class="circle-container"></div>
-        <h1>Nutrisage</h1>
-        <p class="quote">
-          "To eat is a necessity, but to eat intelligently is an art."
-        </p>
-        <br />
-        <p
-          style="
-            border: 2px solid white;
-            border-radius: 5px;
-            padding: 5px 10px;
-            display: inline-block;
-          "
-          class="quote animated-border"
-        >
-          Start Monitoring your Food Intake
-        </p>
-      </div>
+</head>
+<body>
+    <div class="auth-container">
+        <a href="/" class="logo-text">Nutrisage</a>
+        <p class="sub-heading">Welcome back. Please enter your details.</p>
 
-      <div class="login-panel">
-        <div class="flipper-container">
-          <div class="flipper" id="flipper">
-            <div class="form-container login-form">
-              <h2>Login</h2>
-              {% with messages = get_flashed_messages(with_categories=true) %}
-              {% if messages %}
-              <div class="flash-messages">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
                 {% for category, message in messages %}
-                <div class="{{ category }}">{{ message }}</div>
+                    <div class="flash-msg {{ category }}">{{ message }}</div>
                 {% endfor %}
-              </div>
-              {% endif %} {% endwith %}
-              <form method="POST" action="{{ url_for('auth.login') }}">
-                <div class="form-group">
-                  <label for="login-username">Username:</label>
-                  <input
-                    type="text"
-                    id="login-username"
-                    name="username"
-                    required
-                  />
-                </div>
-                <div class="form-group">
-                  <label for="login-password">Password:</label>
-                  <input
-                    type="password"
-                    id="login-password"
-                    name="password"
-                    required
-                  />
-                </div>
-                <button type="submit" class="btn-submit">Login</button>
-              </form>
-              <p class="link-text">
-                Don't have an account? <a id="show-register">Register here</a>
-              </p>
-            </div>
+            {% endif %}
+        {% endwith %}
 
-            <div class="form-container register-form">
-              <h2>Register</h2>
-              <!-- Flash messages for registration 
-                        {% with messages = get_flashed_messages(with_categories=true) %}
-                            {% if messages %}
-                                <div class="flash-messages">
-                                    {% for category, message in messages %}
-                                        <div class="{{ category }}">{{ message }}</div>
-                                    {% endfor %}
-                                </div>
-                            {% endif %}
-                        {% endwith %}-->
-              <form method="POST" action="{{ url_for('auth.register') }}">
-                <div class="form-group">
-                  <label for="register-username">Username:</label>
-                  <input
-                    type="text"
-                    id="register-username"
-                    name="username"
-                    required
-                  />
-                </div>
-                <div class="form-group">
-                  <label for="register-email">Email:</label>
-                  <input
-                    type="email"
-                    id="register-email"
-                    name="email"
-                    required
-                  />
-                </div>
-                <div class="form-group">
-                  <label for="register-password">Password:</label>
-                  <input
-                    type="password"
-                    id="register-password"
-                    name="password"
-                    required
-                  />
-                </div>
-                <button type="submit" class="btn-submit">Register</button>
-              </form>
-              <p class="link-text">
-                Already have an account? <a id="show-login">Login here</a>
-              </p>
+        <form method="POST" action="{{ url_for('auth.login') }}">
+            <div class="form-group">
+                <label>Username</label>
+                <input type="text" name="username" placeholder="Enter username" required />
             </div>
-          </div>
-        </div>
-      </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" name="password" placeholder="••••••••" required />
+            </div>
+            <button type="submit" class="btn-submit">Sign in</button>
+        </form>
+        
+        <p class="toggle-text">
+            Don't have an account? <a href="{{ url_for('auth.register') }}">Create one for free</a>
+        </p>
     </div>
-    <script>
-      (function () {
-        function setupSequentialPulse() {
-          const container = document.getElementById("sequential-pulse");
-          if (!container) return;
-
-          const canvas = document.createElement("canvas");
-          canvas.width = 180;
-          canvas.height = 180;
-          container.appendChild(canvas);
-
-          const ctx = canvas.getContext("2d");
-          const centerX = canvas.width / 2;
-          const centerY = canvas.height / 2;
-
-          let time = 0;
-          let lastTime = 0;
-
-          const radius = 70;
-          const dotCount = 16;
-
-          function animate(timestamp) {
-            if (!lastTime) lastTime = timestamp;
-            const deltaTime = timestamp - lastTime;
-            lastTime = timestamp;
-            time += deltaTime * 0.001;
-
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            ctx.beginPath();
-            ctx.arc(centerX, centerY, 3, 0, Math.PI * 2);
-            ctx.fillStyle = "rgba(255, 255, 255, 0.9)";
-            ctx.fill();
-
-            ctx.beginPath();
-            ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
-            ctx.strokeStyle = "rgba(255, 255, 255, 0.05)";
-            ctx.lineWidth = 1;
-            ctx.stroke();
-
-            for (let i = 0; i < dotCount; i++) {
-              const angle = (i / dotCount) * Math.PI * 2;
-              const pulsePhase = (time * 0.5 + i / dotCount) % 1;
-              const pulseFactor = Math.sin(pulsePhase * Math.PI * 2);
-              const size = 2 + pulseFactor * 2;
-              const finalRadius = radius + pulseFactor * 5;
-              const x = centerX + Math.cos(angle) * finalRadius;
-              const y = centerY + Math.sin(angle) * finalRadius;
-
-              ctx.beginPath();
-              ctx.moveTo(centerX, centerY);
-              ctx.lineTo(x, y);
-              ctx.strokeStyle = `rgba(255, 255, 255, ${
-                0.1 + pulseFactor * 0.2
-              })`;
-              ctx.lineWidth = 1;
-              ctx.stroke();
-
-              ctx.beginPath();
-              ctx.arc(x, y, size, 0, Math.PI * 2);
-              ctx.fillStyle = "rgba(255, 255, 255, 0.9)";
-              ctx.fill();
-            }
-
-            requestAnimationFrame(animate);
-          }
-
-          requestAnimationFrame(animate);
-        }
-
-        function setupCardFlip() {
-          const flipper = document.getElementById("flipper");
-          const showRegisterLink = document.getElementById("show-register");
-          const showLoginLink = document.getElementById("show-login");
-
-          if (flipper && showRegisterLink && showLoginLink) {
-            showRegisterLink.addEventListener("click", function (e) {
-              e.preventDefault();
-              flipper.classList.add("is-flipped");
-            });
-
-            showLoginLink.addEventListener("click", function (e) {
-              e.preventDefault();
-              flipper.classList.remove("is-flipped");
-            });
-          }
-        }
-
-        window.addEventListener("load", function () {
-          setupSequentialPulse();
-          setupCardFlip();
-        });
-      })();
-    </script>
-  </body>
+</body>
 </html>

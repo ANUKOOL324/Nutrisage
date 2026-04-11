@@ -13,8 +13,12 @@ main = Blueprint('main', __name__)
 from foodtracker.auth.routes import admin_required
 
 @main.route('/')
+def landing():
+    return render_template('landing.html')
+
+@main.route('/dashboard')
 @login_required
-def index():
+def dashboard():
    
     logs = Log.query.filter_by(user_id=current_user.id).order_by(Log.date.desc()).all()
 
@@ -62,13 +66,13 @@ def create_log():
 
     if (date_str==''):
         flash("Date is required.", "error")
-        return redirect(url_for('main.index'))
+        return redirect(url_for('main.dashboard'))
 
     try:
         log_date = datetime.strptime(date_str, '%Y-%m-%d').date()
     except ValueError:
         flash("Invalid date format. Use YYYY-MM-DD.", "error")
-        return redirect(url_for('main.index'))
+        return redirect(url_for('main.dashboard'))
 
     log = Log(date=log_date)
     log.user_id = current_user.id
@@ -97,7 +101,7 @@ def delete_log(log_id):
         db.session.rollback()
         flash(f'Error deleting log: {e}', 'danger')
     
-    return redirect(url_for('main.index'))
+    return redirect(url_for('main.dashboard'))
 
 
 #i will work on it !!
@@ -164,7 +168,7 @@ def view(log_id):
     log = Log.query.get_or_404(log_id)
     if log.user_id != current_user.id:
         flash("You do not have permission to view that log!", 'danger')
-        return redirect(url_for('main.index'))
+        return redirect(url_for('main.dashboard'))
 
     foods = Food.query.all()
 
@@ -191,9 +195,9 @@ def view(log_id):
 @login_required
 def add_food_to_log(log_id):
     log = Log.query.get_or_404(log_id)
-    if log.user_id != current_user.id:
+    if log.user_id != current_user.id:  
         flash("You cannot modify another user's log!", 'danger')
-        return redirect(url_for('main.index'))
+        return redirect(url_for('main.dashboard'))
 
     selected_food_id = request.form.get('food-select')
     food = Food.query.get(int(selected_food_id))
@@ -216,7 +220,7 @@ def remove_food_from_log(log_id, food_id):
     log = Log.query.get(log_id)
     if log.user_id != current_user.id:
         flash("You cannot modify another user's log!", 'danger')
-        return redirect(url_for('main.index'))
+        return redirect(url_for('main.dashboard'))
 
     
     

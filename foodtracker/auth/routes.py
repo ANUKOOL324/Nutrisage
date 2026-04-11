@@ -9,7 +9,7 @@ auth_bp = Blueprint('auth', __name__, template_folder='templates', static_folder
 @auth_bp.route('/register', methods=['GET', 'POST'])
 def register():
     if current_user.is_authenticated:
-        return redirect(url_for('main.index'))
+        return redirect(url_for('main.dashboard'))
 
     if request.method == 'POST':
         username = request.form.get('username')
@@ -43,7 +43,7 @@ def register():
 def login():
    
     if current_user.is_authenticated:
-        return redirect(url_for('main.index'))
+        return redirect(url_for('main.dashboard'))
 
     if request.method == 'POST':
         username = request.form.get('username')
@@ -57,7 +57,7 @@ def login():
             login_user(user) 
            # flash('Logged in successfully!', 'success')
             next_page = request.args.get('next')
-            return redirect(url_for('main.index'))
+            return redirect(url_for('main.dashboard'))
         else:
             flash('Invalid username or password.', 'danger') 
 
@@ -79,6 +79,6 @@ def admin_required(f):
        
         if not current_user.is_authenticated or not current_user.is_admin:
             flash('You do not have permission to access that page.', 'warning')
-            return redirect(url_for('main.index')) 
+            return redirect(url_for('main.dashboard')) 
         return f(*args, **kwargs)
     return decorated_function

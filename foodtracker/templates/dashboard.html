@@ -122,7 +122,7 @@
         <div class="col-lg-12">
           <h1>
             <a
-              href="{{ url_for('main.index') }}"
+              href="{{ url_for('main.dashboard') }}"
               style="
                 border: 2px solid white;
                 border-radius: 5px;
@@ -137,7 +137,7 @@
             <div class="col-lg-4 col-lg-offset-4">
               <ul class="nav nav-pills nav-justified">
                 <li role="presentation" class="active">
-                  <a href="{{ url_for('main.index') }}" title="Home">Home</a>
+                  <a href="{{ url_for('main.dashboard') }}" title="Home">Home</a>
                 </li>
                 <li role="presentation" class="active">
                   <a
@@ -174,24 +174,27 @@
                 <div
                   style="
                     position: absolute;
-                    top: -39px;
+                    top: -45px;
                     right: -364px;
                     font-size: 16px;
                     color: white;
+                    border: 2px solid #3b82f6;
+                    border-radius: 25px;
+                    padding: 4px 16px;
+                    background-color: rgba(59, 130, 246, 0.15);
+                    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
                   "
                 >
-                  <li role="presentation" class="navbar-username">
-                    <a>
+                  <div class="navbar-username" style="list-style: none; margin: 0; padding: 0;">
+                    <a style="color: white; text-decoration: none; font-weight: bold;">
                       <span
                         class="glyphicon glyphicon-user"
                         aria-hidden="true"
-                        style="color: white"
+                        style="margin-right: 5px;"
                       ></span>
-                      <span style="color: white"
-                        >{{ current_user.username }}</span
-                      >
+                      {{ current_user.username }}
                     </a>
-                  </li>
+                  </div>
                 </div>
 
                 {%else %}
@@ -240,7 +243,7 @@
         <div class="col-lg-6">
           <div class="chart-section">
             <h3>Today's Macronutrient Breakdown</h3>
-            <div class="doughnut-chart-container">
+            <div class="chart-container">
               <canvas id="macroSummaryChart"></canvas>
             </div>
             <div class="text-center mt-3">
@@ -311,7 +314,11 @@
 
       async function fetchAndRenderCaloriesChart() {
         try {
-          const response = await fetch("/dashboard/calories_chart_data");
+          const range = document.getElementById("timeRangeSelect").value;
+          const dayType = document.getElementById("dayTypeSelect").value;
+          const unit = document.getElementById("unitSelect").value;
+          
+          const response = await fetch(`/dashboard/calories_chart_data?range=${range}&dayType=${dayType}&unit=${unit}`);
           if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
           }
@@ -349,10 +356,9 @@
                 y: {
                   stacked: true,
                   beginAtZero: true,
-                  max: 3000,
                   title: {
                     display: true,
-                    text: "Energy (kcal)",
+                    text: document.getElementById("unitSelect").value === 'g' ? "Weight (g)" : "Energy (kcal)",
                   },
                 },
               },
@@ -499,57 +505,60 @@
           document.getElementById("summary-fat-target").innerText = fatTarget;
 
           macroSummaryChartInstance = new Chart(ctx, {
-            type: "doughnut",
+            type: "bar",
             data: {
               labels: [
-                "Protein Consumed",
-                "Carbs Consumed",
-                "Fat Consumed",
-                "Protein Remaining",
-                "Carbs Remaining",
-                "Fat Remaining",
+                "Protein",
+                "Carbs",
+                "Fat"
               ],
               datasets: [
                 {
-                  data: [
-                    proteinConsumed,
-                    carbsConsumed,
-                    fatConsumed,
-                    Math.max(0, proteinTarget - proteinConsumed),
-                    Math.max(0, carbsTarget - carbsConsumed),
-                    Math.max(0, fatTarget - fatConsumed),
-                  ],
-                  backgroundColor: [
-                    "#8BC34A",
-                    "#03A9F4",
-                    "#FF5722",
-                    "#C8E6C9",
-                    "#B3E5FC",
-                    "#FFCCBC",
-                  ],
-                  hoverOffset: 4,
+                  label: "Target",
+                  data: [proteinTarget, carbsTarget, fatTarget],
+                  backgroundColor: "rgba(158, 158, 158, 0.4)",
+                  borderColor: "#9E9E9E",
+                  borderWidth: 1,
+                  borderRadius: 4
                 },
-              ],
+                {
+                  label: "Consumed",
+                  data: [proteinConsumed, carbsConsumed, fatConsumed],
+                  backgroundColor: [
+                    "rgba(139, 195, 74, 0.9)",
+                    "rgba(3, 169, 244, 0.9)",
+                    "rgba(255, 87, 34, 0.9)"
+                  ],
+                  borderColor: [
+                    "#689F38",
+                    "#0288D1",
+                    "#E64A19"
+                  ],
+                  borderWidth: 1,
+                  borderRadius: 4
+                }
+              ]
             },
             options: {
               responsive: true,
               maintainAspectRatio: false,
-              cutout: "80%",
+              scales: {
+                y: {
+                  beginAtZero: true,
+                  title: {
+                    display: true,
+                    text: "Grams (g)"
+                  }
+                }
+              },
               plugins: {
                 legend: {
-                  position: "bottom",
+                  position: "top",
                 },
                 tooltip: {
                   callbacks: {
                     label: function (context) {
-                      let label = context.label || "";
-                      if (label) {
-                        label += ": ";
-                      }
-                      if (context.parsed) {
-                        label += context.parsed + " g";
-                      }
-                      return label;
+                      return context.dataset.label + ": " + context.parsed.y + " g";
                     },
                   },
                 },
@@ -571,6 +580,12 @@
         fetchAndRenderCaloriesChart();
         fetchAndRenderEnergySummaryChart();
         fetchAndRenderMacroSummaryChart();
+
+        // Wire up control event listeners to dynamically re-render
+        const controls = ["timeRangeSelect", "dayTypeSelect", "unitSelect"];
+        controls.forEach(id => {
+            document.getElementById(id).addEventListener("change", fetchAndRenderCaloriesChart);
+        });
       });
     </script>
   </body>

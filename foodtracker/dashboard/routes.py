@@ -23,6 +23,9 @@ def get_calories_chart_data():
 
     user_id = current_user.id
     time_range_str = request.args.get('range', '3weeks')
+    day_type_str = request.args.get('dayType', 'all')
+    unit_str = request.args.get('unit', 'kcal')
+
     weeks = 3
     if time_range_str == '1week':
         weeks = 1
@@ -36,11 +39,19 @@ def get_calories_chart_data():
     end_date = date.today()
     start_date = end_date - timedelta(weeks=weeks)
 
-    daily_macro_kcal_data = defaultdict(lambda: {'Protein': 0, 'Carbs': 0, 'Fat': 0, 'Alcohol': 0})
+    daily_macro_data = defaultdict(lambda: {'Protein': 0, 'Carbs': 0, 'Fat': 0})
 
     all_dates_in_range = []
     current_date_iter = start_date
     while current_date_iter <= end_date:
+        # Day type filtering filtering
+        if day_type_str == 'weekdays' and current_date_iter.weekday() >= 5:
+            current_date_iter += timedelta(days=1)
+            continue
+        if day_type_str == 'weekends' and current_date_iter.weekday() < 5:
+            current_date_iter += timedelta(days=1)
+            continue
+            
         all_dates_in_range.append(current_date_iter)
         current_date_iter += timedelta(days=1)
 
@@ -55,32 +66,34 @@ def get_calories_chart_data():
         for log_food_item in log_entry.log_food_items: 
             food_item = log_food_item.food 
             
-            protein_kcal = food_item.proteins * 4
-            carbs_kcal = food_item.carbs * 4
-            fat_kcal = food_item.fats * 9
-            alcohol_kcal = 0
+            if unit_str == 'kcal':
+                protein_val = food_item.proteins * 4
+                carbs_val = food_item.carbs * 4
+                fat_val = food_item.fats * 9
+            else:
+                # Calculate strictly in grams
+                protein_val = food_item.proteins
+                carbs_val = food_item.carbs
+                fat_val = food_item.fats
 
-            daily_macro_kcal_data[log_date_str]['Protein'] += protein_kcal
-            daily_macro_kcal_data[log_date_str]['Carbs'] += carbs_kcal
-            daily_macro_kcal_data[log_date_str]['Fat'] += fat_kcal
-            daily_macro_kcal_data[log_date_str]['Alcohol'] += alcohol_kcal
+            daily_macro_data[log_date_str]['Protein'] += protein_val
+            daily_macro_data[log_date_str]['Carbs'] += carbs_val
+            daily_macro_data[log_date_str]['Fat'] += fat_val
 
     labels = []
     protein_series = []
     carbs_series = []
     fat_series = []
-    alcohol_series = []
 
     for dt in all_dates_in_range:
         date_key = dt.strftime('%Y-%m-%d')
         display_label = dt.strftime('%b %d')
 
         labels.append(display_label)
-        daily_macros = daily_macro_kcal_data[date_key]
+        daily_macros = daily_macro_data[date_key]
         protein_series.append(round(daily_macros['Protein'], 2))
         carbs_series.append(round(daily_macros['Carbs'], 2))
         fat_series.append(round(daily_macros['Fat'], 2))
-        alcohol_series.append(round(daily_macros['Alcohol'], 2))
 
     chart_data = {
         'labels': labels,
@@ -99,11 +112,6 @@ def get_calories_chart_data():
                 'label': 'Fat',
                 'backgroundColor': '#FF5722',
                 'data': fat_series
-            },
-            {
-                'label': 'Alcohol',
-                'backgroundColor': '#FFC107',
-                'data': alcohol_series
             }
         ]
     }

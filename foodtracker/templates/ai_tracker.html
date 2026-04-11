@@ -112,14 +112,14 @@
 				<div class="overlay"></div>
 				<div class="col-lg-12">
 					<h1>
-						<a href="{{ url_for('main.index') }}" style="border: 2px solid white; border-radius: 5px; padding: 5px 10px; display: inline-block;">AI TRACKER</a>
+						<a href="{{ url_for('main.dashboard') }}" style="border: 2px solid white; border-radius: 5px; padding: 5px 10px; display: inline-block;">AI TRACKER</a>
 					</h1>
 					
 					<div class="row t20">
 						<div class="col-lg-4 col-lg-offset-4">
 							<ul class="nav nav-pills nav-justified">
 							  <li role="presentation" class="active">
-							  	<a href="{{ url_for('main.index') }}" title="Home">Home</a>
+							  	<a href="{{ url_for('main.dashboard') }}" title="Home">Home</a>
 							  </li>
 							  <li role="presentation" class='active'>
                                <a href="{{ url_for('ai.ai_tracker_page') }}" title="AI Tracker" class="animated-border">AI Tracker</a>
@@ -139,15 +139,31 @@
 							  <li role="presentation" class='active'>
 							  	<a href="{{ url_for('auth.logout') }}" title="Add Food Item">Logout</a>
 							  </li>
-                              <div style="position: absolute; top: -39px;
-    right: -364px; font-size: 16px; color: white;">
-    <li role="presentation" class="navbar-username">
-        <a>
-            <span class="glyphicon glyphicon-user" aria-hidden="true" style="color: white;"></span>
-           <span style="color:white">{{ current_user.username }}</span>
-        </a>
-    </li>
-</div>
+                              <div
+                  style="
+                    position: absolute;
+                    top: -45px;
+                    right: -364px;
+                    font-size: 16px;
+                    color: white;
+                    border: 2px solid #3b82f6;
+                    border-radius: 25px;
+                    padding: 4px 16px;
+                    background-color: rgba(59, 130, 246, 0.15);
+                    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+                  "
+                >
+                  <div class="navbar-username" style="list-style: none; margin: 0; padding: 0;">
+                    <a style="color: white; text-decoration: none; font-weight: bold;">
+                      <span
+                        class="glyphicon glyphicon-user"
+                        aria-hidden="true"
+                        style="margin-right: 5px;"
+                      ></span>
+                      {{ current_user.username }}
+                    </a>
+                  </div>
+                </div>
 							  {%else %}
 							  <li role="presentation" class='active'>
 							  	<a href="{{ url_for('auth.login') }}" title="Add Food Item">Login</a>
