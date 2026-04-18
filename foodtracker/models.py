@@ -9,6 +9,7 @@ class LogFoodItem(db.Model):
     log_id = db.Column(db.Integer, db.ForeignKey('log.id'), primary_key=True)
     food_id = db.Column(db.Integer, db.ForeignKey('food.id'), primary_key=True)
     timestamp = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    quantity = db.Column(db.Integer, nullable=False, default=1)
     #for revising !!!
     # Relationships from the association object back to Log and Food
     # These create attributes like log_food_item.log (gets the Log object)
@@ -17,8 +18,27 @@ class LogFoodItem(db.Model):
     log = db.relationship('Log', backref=db.backref('log_food_items', cascade="all, delete-orphan", lazy='dynamic'))
     food = db.relationship('Food', backref=db.backref('log_food_items', cascade="all, delete-orphan", lazy=True))
 
+    @property
+    def line_protein(self):
+        return self.food.proteins * self.quantity
+
+    @property
+    def line_carbs(self):
+        return self.food.carbs * self.quantity
+
+    @property
+    def line_fat(self):
+        return self.food.fats * self.quantity
+
+    @property
+    def line_calories(self):
+        return self.food.calories * self.quantity
+
     def __repr__(self):
-        return f'<LogFoodItem Log:{self.log_id} Food:{self.food_id} @{self.timestamp.strftime("%Y-%m-%d %H:%M:%S")}>'
+        return (
+            f'<LogFoodItem Log:{self.log_id} Food:{self.food_id} '
+            f'Qty:{self.quantity} @{self.timestamp.strftime("%Y-%m-%d %H:%M:%S")}>'
+        )
 
 
 class User(db.Model, UserMixin):

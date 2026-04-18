@@ -32,13 +32,10 @@ def dashboard():
         calories = 0
 
         for log_food_item in log.log_food_items:
-          
-            food = log_food_item.food 
-            
-            proteins += food.proteins
-            carbs += food.carbs
-            fats += food.fats
-            calories += food.calories 
+            proteins += log_food_item.line_protein
+            carbs += log_food_item.line_carbs
+            fats += log_food_item.line_fat
+            calories += log_food_item.line_calories
 
         log_dates.append({
             'log_date' : log,
@@ -73,6 +70,11 @@ def create_log():
     except ValueError:
         flash("Invalid date format. Use YYYY-MM-DD.", "error")
         return redirect(url_for('main.dashboard'))
+
+    existing_log = Log.query.filter_by(date=log_date, user_id=current_user.id).first()
+    if existing_log:
+        flash("A log for that date already exists. Opening it instead.", "info")
+        return redirect(url_for('main.view', log_id=existing_log.id))
 
     log = Log(date=log_date)
     log.user_id = current_user.id
@@ -181,12 +183,10 @@ def view(log_id):
 
     
     for log_food_item in log.log_food_items: 
-        food = log_food_item.food
-
-        totals['protein'] += food.proteins
-        totals['carbs'] += food.carbs
-        totals['fat'] += food.fats
-        totals['calories'] += food.calories
+        totals['protein'] += log_food_item.line_protein
+        totals['carbs'] += log_food_item.line_carbs
+        totals['fat'] += log_food_item.line_fat
+        totals['calories'] += log_food_item.line_calories
 
     return render_template('view.html', foods=foods, log=log, totals=totals)
 
@@ -200,16 +200,34 @@ def add_food_to_log(log_id):
         return redirect(url_for('main.dashboard'))
 
     selected_food_id = request.form.get('food-select')
-    food = Food.query.get(int(selected_food_id))
+    quantity_raw = request.form.get('quantity', '1')
 
-    
-    new_log_food_item = LogFoodItem(
-        log=log,          
-        food=food,        
-        timestamp=datetime.now() # Store the current timestamp!
-    )
-    db.session.add(new_log_food_item)
-    db.session.commit() # Save it
+    try:
+        food_id = int(selected_food_id)
+        quantity = max(1, int(quantity_raw))
+    except (TypeError, ValueError):
+        flash("Please choose a valid food and quantity.", 'danger')
+        return redirect(url_for('main.view', log_id=log_id))
+
+    food = Food.query.get_or_404(food_id)
+    existing_log_food_item = LogFoodItem.query.filter_by(
+        log_id=log.id,
+        food_id=food.id
+    ).first()
+
+    if existing_log_food_item:
+        existing_log_food_item.quantity += quantity
+        existing_log_food_item.timestamp = datetime.now()
+    else:
+        new_log_food_item = LogFoodItem(
+            log=log,
+            food=food,
+            quantity=quantity,
+            timestamp=datetime.now()
+        )
+        db.session.add(new_log_food_item)
+
+    db.session.commit()
 
     return redirect(url_for('main.view', log_id=log_id))
 
@@ -217,7 +235,7 @@ def add_food_to_log(log_id):
 @main.route('/remove_food_from_log/<int:log_id>/<int:food_id>')
 @login_required
 def remove_food_from_log(log_id, food_id):
-    log = Log.query.get(log_id)
+    log = Log.query.get_or_404(log_id)
     if log.user_id != current_user.id:
         flash("You cannot modify another user's log!", 'danger')
         return redirect(url_for('main.dashboard'))
@@ -230,7 +248,10 @@ def remove_food_from_log(log_id, food_id):
     ).first()
 
     if log_food_item_to_delete: 
-        db.session.delete(log_food_item_to_delete)
-        db.session.commit() # Save the change
+        if log_food_item_to_delete.quantity > 1:
+            log_food_item_to_delete.quantity -= 1
+        else:
+            db.session.delete(log_food_item_to_delete)
+        db.session.commit()
 
     return redirect(url_for('main.view', log_id=log_id))

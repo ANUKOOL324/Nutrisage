@@ -32,71 +32,95 @@
               >FOOD TRACKER</a
             >
           </h1>
-
-          <div class="row t20">
-            <div class="col-lg-4 col-lg-offset-4">
-              <ul class="nav nav-pills nav-justified">
-                <li role="presentation" class="active">
-                  <a href="{{ url_for('main.dashboard') }}" title="Home">Home</a>
-                </li>
-                <li role="presentation" class="active">
-                  <a
-                    href="{{ url_for('ai.ai_tracker_page') }}"
-                    title="AI Tracker"
-                    class="animated-border"
-                    >AI Tracker</a
-                  >
-                </li>
-                {%if current_user.id==1 %}
-                <li role="presentation">
-                  <a href="{{ url_for('main.add') }}" title="Add Food Item"
-                    >Add Food Item</a
-                  >
-                </li>
-                <li role="presentation">
-                  <a href="{{ url_for('main.admin') }}" title="Add Food Item"
-                    >Admin</a
-                  >
-                </li>
-                {%endif%} {% if current_user.is_authenticated %}
-                <li role="presentation" class="active">
-                  <a
-                    href="{{ url_for('dashboard.dashboard_page') }}"
-                    title="Add Food Item"
-                    >Dashboard</a
-                  >
-                </li>
-                <li role="presentation" class="active">
-                  <a href="{{ url_for('auth.logout') }}" title="Add Food Item"
-                    >Logout</a
-                  >
-                </li>
-                <div class="user-badge user-badge-compact">
-                  <li role="presentation" class="navbar-username">
-                    <a>
-                      <span
-                        class="glyphicon glyphicon-user"
-                        aria-hidden="true"
-                      ></span>
-                      <span>{{ current_user.username }}</span>
-                    </a>
+          <button
+            type="button"
+            class="mobile-nav-toggle"
+            data-mobile-menu-toggle
+            aria-expanded="false"
+          >
+            <span class="icon-stack" aria-hidden="true">
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </span>
+            Menu
+          </button>
+          <div class="app-header-menu" data-mobile-menu>
+            <div class="row t20">
+              <div class="col-lg-4 col-lg-offset-4">
+                <ul class="nav nav-pills nav-justified">
+                  <li role="presentation" class="active">
+                    <a href="{{ url_for('main.dashboard') }}" title="Home">Home</a>
                   </li>
-                </div>
+                  <li role="presentation" class="active">
+                    <a
+                      href="{{ url_for('ai.ai_tracker_page') }}"
+                      title="AI Tracker"
+                      class="animated-border"
+                      >AI Tracker</a
+                    >
+                  </li>
+                  {%if current_user.id==1 %}
+                  <li role="presentation">
+                    <a href="{{ url_for('main.add') }}" title="Add Food Item"
+                      >Add Food Item</a
+                    >
+                  </li>
+                  <li role="presentation">
+                    <a href="{{ url_for('main.admin') }}" title="Add Food Item"
+                      >Admin</a
+                    >
+                  </li>
+                  {%endif%} {% if current_user.is_authenticated %}
+                  <li role="presentation" class="active">
+                    <a
+                      href="{{ url_for('dashboard.dashboard_page') }}"
+                      title="Add Food Item"
+                      >Dashboard</a
+                    >
+                  </li>
 
-                {%else %}
-                <li role="presentation" class="active">
-                  <a href="{{ url_for('auth.login') }}" title="Add Food Item"
-                    >Login</a
-                  >
-                </li>
-                <li role="presentation" class="active">
-                  <a href="{{ url_for('auth.register') }}" title="Add Food Item"
-                    >Registration</a
-                  >
-                </li>
-                {%endif%}
-              </ul>
+                  {%else %}
+                  <li role="presentation" class="active">
+                    <a href="{{ url_for('auth.login') }}" title="Add Food Item"
+                      >Login</a
+                    >
+                  </li>
+                  <li role="presentation" class="active">
+                    <a href="{{ url_for('auth.register') }}" title="Add Food Item"
+                      >Registration</a
+                    >
+                  </li>
+                  {%endif%}
+                </ul>
+              </div>
             </div>
+            {% if current_user.is_authenticated %}
+            <div class="header-actions">
+              <div class="user-badge user-badge-label">
+                <div class="navbar-username">
+                  <a>
+                    <span
+                      class="glyphicon glyphicon-user"
+                      aria-hidden="true"
+                    ></span>
+                    <span>{{ current_user.username }}</span>
+                  </a>
+                </div>
+              </div>
+              <div class="user-badge user-badge-action">
+                <div class="navbar-username">
+                  <a href="{{ url_for('auth.logout') }}" title="Logout">
+                    <span
+                      class="glyphicon glyphicon-log-out"
+                      aria-hidden="true"
+                    ></span>
+                    Logout
+                  </a>
+                </div>
+              </div>
+            </div>
+            {% endif %}
           </div>
         </div>
       </div>
@@ -117,6 +141,16 @@
                       <option value="{{ food.id }}">{{ food.name }}</option>
                       {% endfor %}
                     </select>
+                    <span class="input-group-addon">Qty</span>
+                    <input
+                      type="number"
+                      class="form-control"
+                      name="quantity"
+                      min="1"
+                      value="1"
+                      aria-label="Quantity"
+                      style="max-width: 90px;"
+                    />
                     <span class="input-group-btn">
                       <button
                         type="submit"
@@ -176,6 +210,7 @@
                   <tr>
                     <th class="table-col-id">#</th>
                     <th>Name</th>
+                    <th class="table-col-actions-sm">Qty</th>
                     <th class="table-col-protein">Protein</th>
                     <th class="table-col-carbs">Carbohydrates</th>
                     <th class="table-col-fat">Fat</th>
@@ -189,17 +224,18 @@
                   <tr>
                     <td>{{ loop.index }}</td>
                     <td>{{ log_food_item.food.name }}</td>
-                    <td>{{ log_food_item.food.proteins }}</td>
-                    <td>{{ log_food_item.food.carbs }}</td>
-                    <td>{{ log_food_item.food.fats }}</td>
-                    <td>{{ log_food_item.food.calories }}</td>
+                    <td>{{ log_food_item.quantity }}</td>
+                    <td>{{ log_food_item.line_protein }}</td>
+                    <td>{{ log_food_item.line_carbs }}</td>
+                    <td>{{ log_food_item.line_fat }}</td>
+                    <td>{{ log_food_item.line_calories }}</td>
                     <td>{{ log_food_item.timestamp.strftime('%H:%M') }}</td>
                     <td>
                       <a
                         href="{{ url_for('main.remove_food_from_log', log_id=log.id, food_id=log_food_item.food.id) }}"
                         class="btn btn-danger btn-xs"
                       >
-                        <i class="glyphicon glyphicon-trash"></i> Delete
+                        <i class="glyphicon glyphicon-minus"></i> Remove One
                       </a>
                     </td>
                   </tr>
@@ -213,5 +249,6 @@
     </div>
     <script src="{{ url_for('static', filename='bs/js/jquery.min.js') }}"></script>
     <script src="{{ url_for('static', filename='bs/js/bootstrap.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/app-header.js') }}"></script>
   </body>
 </html>

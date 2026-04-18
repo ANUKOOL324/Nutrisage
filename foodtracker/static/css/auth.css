@@ -146,3 +146,45 @@ body.auth-page {
     background: rgba(16, 185, 129, 0.1);
     border: 1px solid rgba(16, 185, 129, 0.2);
 }
+
+@media (max-width: 767px) {
+    body.auth-page {
+        padding: 20px 14px;
+        align-items: flex-start;
+    }
+
+    .auth-container {
+        max-width: 100%;
+        margin: 20px 0;
+        padding: 28px 20px;
+        border-radius: 18px;
+    }
+
+    .logo-text {
+        font-size: 2.1rem;
+    }
+
+    .sub-heading,
+    .toggle-text {
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 480px) {
+    body.auth-page {
+        padding: 14px 10px;
+    }
+
+    .auth-container {
+        padding: 22px 16px;
+    }
+
+    .logo-text {
+        font-size: 1.9rem;
+    }
+
+    .form-group input,
+    .btn-submit {
+        padding: 13px 14px;
+    }
+}

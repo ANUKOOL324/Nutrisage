@@ -4,7 +4,18 @@ from .extensions import db
 from flask_login import LoginManager
 from flask_migrate import Migrate
 import os
+from sqlalchemy import inspect, text
 from .ai.routes import load_ai_prediction_model
+
+
+def ensure_log_food_schema():
+    columns = {column['name'] for column in inspect(db.engine).get_columns('log_food')}
+
+    if 'quantity' not in columns:
+        db.session.execute(
+            text("ALTER TABLE log_food ADD COLUMN quantity INTEGER NOT NULL DEFAULT 1")
+        )
+        db.session.commit()
 
 def create_app():
     app = Flask(__name__)
@@ -41,6 +52,7 @@ def create_app():
     app.register_blueprint(bp_ai_tracker, url_prefix='/ai-tracker') 
 
     with app.app_context():
+        ensure_log_food_schema()
         load_ai_prediction_model() 
 
     return app

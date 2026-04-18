@@ -13,6 +13,7 @@ body {
 
 #wrapper {
     position: relative;
+    overflow-x: hidden;
 }
 
 #homeJumbo {
@@ -26,8 +27,10 @@ body {
 
 #homeJumbo > .overlay {
     position: absolute;
-    width: 100%;
-    height: 183px;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
     background: rgba(44, 62, 80, 0.8);
 }
 
@@ -50,6 +53,8 @@ body {
     padding: 5px 10px;
     border: 2px solid #fff;
     border-radius: 5px;
+    max-width: calc(100vw - 40px);
+    word-break: break-word;
 }
 
 .t10 {
@@ -105,6 +110,76 @@ body {
     padding-left: 10px;
 }
 
+.nav.nav-pills.nav-justified {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+}
+
+.nav.nav-pills.nav-justified::before,
+.nav.nav-pills.nav-justified::after {
+    display: none;
+}
+
+.nav.nav-pills.nav-justified > li {
+    float: none;
+    display: block;
+    flex: 1 1 150px;
+    width: auto;
+}
+
+.nav.nav-pills.nav-justified > li > a {
+    min-height: 44px;
+    white-space: normal;
+}
+
+.header-actions {
+    position: absolute;
+    top: 18px;
+    right: 24px;
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.mobile-nav-toggle {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 42px;
+    margin: 12px auto 0;
+    padding: 10px 16px;
+    color: #fff;
+    font-weight: 700;
+    background: rgba(15, 23, 42, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 999px;
+}
+
+.mobile-nav-toggle .icon-bar {
+    display: block;
+    width: 16px;
+    height: 2px;
+    background: currentColor;
+    border-radius: 999px;
+}
+
+.mobile-nav-toggle .icon-bar + .icon-bar {
+    margin-top: 3px;
+}
+
+.mobile-nav-toggle .icon-stack {
+    display: inline-flex;
+    flex-direction: column;
+}
+
+.app-header-menu {
+    display: block;
+}
+
 .animated-border {
     position: relative;
     overflow: hidden;
@@ -132,9 +207,7 @@ body {
 }
 
 .user-badge {
-    position: absolute;
-    top: -45px;
-    right: -364px;
+    position: static;
     padding: 4px 16px;
     color: #fff;
     font-size: 16px;
@@ -145,7 +218,6 @@ body {
 }
 
 .user-badge.user-badge-compact {
-    top: -39px;
     border: 0;
     background: transparent;
     box-shadow: none;
@@ -161,7 +233,18 @@ body {
     color: #fff;
     font-weight: 700;
     text-decoration: none;
+}
+
+.user-badge.user-badge-label .navbar-username a {
     pointer-events: none;
+}
+
+.user-badge.user-badge-action {
+    background-color: rgba(15, 23, 42, 0.32);
+}
+
+.user-badge.user-badge-action .navbar-username a {
+    pointer-events: auto;
 }
 
 .navbar-username .glyphicon {
@@ -208,6 +291,10 @@ footer {
     width: 20%;
 }
 
+.table-responsive {
+    border: 0;
+}
+
 .label-hidden {
     visibility: hidden;
 }
@@ -239,4 +326,223 @@ footer {
 .status-message-error {
     color: red;
     text-align: center;
+}
+
+@media (max-width: 991px) {
+    #homeJumbo {
+        min-height: 220px;
+    }
+
+    #homeJumbo > .overlay {
+        height: auto;
+    }
+
+    #homeJumbo h1 {
+        padding-top: 18px;
+        font-size: 28px;
+    }
+
+    .brand-badge-link {
+        font-size: 28px;
+    }
+
+    .header-actions {
+        position: static;
+        justify-content: center;
+        flex-wrap: wrap;
+        margin-top: 14px;
+    }
+
+    .nav.nav-pills.nav-justified > li {
+        flex: 1 1 180px;
+    }
+}
+
+@media (max-width: 767px) {
+    body {
+        background-size: 16px 16px;
+    }
+
+    #homeJumbo .col-lg-12 {
+        position: relative;
+    }
+
+    #homeJumbo {
+        min-height: 250px;
+        margin-bottom: 16px;
+    }
+
+    #homeJumbo > .overlay {
+        height: auto;
+    }
+
+    #homeJumbo h1 {
+        padding-top: 16px;
+        font-size: 24px;
+        margin: 0;
+        text-align: center;
+    }
+
+    .brand-badge-link {
+        font-size: 24px;
+        line-height: 1.2;
+        max-width: calc(100vw - 120px);
+    }
+
+    .t20 {
+        margin-top: 16px;
+    }
+
+    .nav.nav-pills.nav-justified {
+        gap: 6px;
+        margin: 0;
+    }
+
+    .nav.nav-pills.nav-justified > li {
+        flex: 1 1 100%;
+        padding-left: 0;
+    }
+
+    .nav.nav-pills.nav-justified > li + li {
+        padding-left: 0;
+    }
+
+    .mobile-nav-toggle {
+        display: inline-flex;
+        position: absolute;
+        top: 16px;
+        right: 15px;
+        z-index: 4;
+        min-height: 40px;
+        margin: 0;
+        padding: 9px 12px;
+        font-size: 12px;
+        line-height: 1;
+        box-shadow: 0 12px 24px rgba(15, 23, 42, 0.18);
+    }
+
+    .app-header-menu {
+        display: none;
+        max-width: 340px;
+        margin: 18px auto 0;
+        padding: 12px;
+        background: rgba(15, 23, 42, 0.48);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 18px;
+        box-shadow: 0 18px 34px rgba(15, 23, 42, 0.18);
+    }
+
+    .app-header-menu.is-open {
+        display: block;
+    }
+
+    .app-header-menu .row,
+    .app-header-menu [class*="col-"] {
+        margin: 0;
+        width: 100%;
+        padding: 0;
+    }
+
+    .header-actions {
+        position: static;
+        flex-direction: column;
+        gap: 8px;
+        margin-top: 10px;
+        padding: 0;
+    }
+
+    .user-badge {
+        width: 100%;
+        text-align: center;
+    }
+
+    .user-badge .navbar-username a {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    footer {
+        margin: 16px 0;
+        padding: 0 12px;
+    }
+}
+
+@media (max-width: 575px) {
+    #wrapper {
+        padding-left: 0;
+        padding-right: 0;
+    }
+
+    #homeJumbo {
+        min-height: 270px;
+    }
+
+    #homeJumbo > .overlay {
+        height: auto;
+    }
+
+    #homeJumbo h1 {
+        font-size: 22px;
+    }
+
+    .brand-badge-link {
+        font-size: 22px;
+        padding: 6px 10px;
+        max-width: calc(100vw - 92px);
+    }
+
+    .mobile-nav-toggle {
+        right: 12px;
+        width: auto;
+        max-width: none;
+        padding: 9px 10px;
+    }
+
+    .app-header-menu {
+        width: calc(100% - 28px);
+    }
+
+    .f25 {
+        font-size: 20px;
+    }
+}
+
+@media (max-width: 380px) {
+    #homeJumbo h1 {
+        font-size: 20px;
+    }
+
+    .brand-badge-link {
+        font-size: 20px;
+        padding: 5px 8px;
+        max-width: calc(100vw - 72px);
+    }
+
+    .mobile-nav-toggle {
+        top: 14px;
+        right: 8px;
+        min-width: 36px;
+        min-height: 36px;
+        padding: 8px;
+        gap: 0;
+        font-size: 0;
+        border-radius: 14px;
+    }
+
+    .mobile-nav-toggle .icon-stack {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .mobile-nav-toggle .icon-bar {
+        width: 14px;
+    }
+
+    .app-header-menu {
+        width: calc(100% - 20px);
+        margin-top: 14px;
+    }
 }

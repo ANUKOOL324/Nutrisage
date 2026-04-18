@@ -91,3 +91,60 @@ body {
 .quote-line {
     text-align: center;
 }
+
+.footer-block {
+    margin-top: auto;
+}
+
+.footer-block > .row {
+    margin-right: 0;
+    margin-left: 0;
+}
+
+.footer-block > .row > [class*="col-"] {
+    padding-right: 0;
+    padding-left: 0;
+}
+
+.footer-block .soft-panel {
+    margin-bottom: 0;
+}
+
+@media (max-width: 991px) {
+    .hero-grid-band {
+        padding: 24px 0 32px;
+        background-size: 18px 18px;
+    }
+
+    .soft-panel {
+        margin-bottom: 18px;
+    }
+}
+
+@media (max-width: 767px) {
+    .hero-grid-band {
+        margin-top: -12px;
+        margin-bottom: 20px;
+        padding: 20px 0 24px;
+        background-attachment: scroll;
+    }
+
+    .soft-panel .panel-body {
+        padding: 14px 16px;
+    }
+
+    .list-group-item {
+        padding: 10px 14px;
+    }
+
+    .quote-line {
+        padding: 0 12px;
+        font-size: 14px;
+        line-height: 1.6;
+    }
+
+    .footer-block > .row > [class*="col-"] {
+        padding-right: 10px;
+        padding-left: 10px;
+    }
+}

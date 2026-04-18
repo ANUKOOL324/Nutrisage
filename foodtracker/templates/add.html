@@ -21,18 +21,52 @@
 					<h1>
 						<a href="{{ url_for('main.dashboard') }}" class="brand-badge-link">FOOD TRACKER</a>
 					</h1>
-					
-					<div class="row t20">
-						<div class="col-lg-4 col-lg-offset-4">
-							<ul class="nav nav-pills nav-justified">
-							  <li role="presentation">
-							  	<a href="{{ url_for('main.dashboard') }}" title="Home">Home</a>
-							  </li>
-							  <li role="presentation" class="active">
-							  	<a href="{{ url_for('main.add') }}" title="Add Food Item">Add Food Item</a>
-							  </li>
-							</ul>
+					<button
+						type="button"
+						class="mobile-nav-toggle"
+						data-mobile-menu-toggle
+						aria-expanded="false"
+					>
+						<span class="icon-stack" aria-hidden="true">
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+						</span>
+						Menu
+					</button>
+					<div class="app-header-menu" data-mobile-menu>
+						<div class="row t20">
+							<div class="col-lg-4 col-lg-offset-4">
+								<ul class="nav nav-pills nav-justified">
+								  <li role="presentation">
+								  	<a href="{{ url_for('main.dashboard') }}" title="Home">Home</a>
+								  </li>
+								  <li role="presentation" class="active">
+								  	<a href="{{ url_for('main.add') }}" title="Add Food Item">Add Food Item</a>
+								  </li>
+								</ul>
+							</div>
 						</div>
+                    {% if current_user.is_authenticated %}
+                    <div class="header-actions">
+                        <div class="user-badge user-badge-label">
+                            <div class="navbar-username">
+                                <a>
+                                    <span class="glyphicon glyphicon-user" aria-hidden="true"></span>
+                                    {{ current_user.username }}
+                                </a>
+                            </div>
+                        </div>
+                        <div class="user-badge user-badge-action">
+                            <div class="navbar-username">
+                                <a href="{{ url_for('auth.logout') }}" title="Logout">
+                                    <span class="glyphicon glyphicon-log-out" aria-hidden="true"></span>
+                                    Logout
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
 					</div>
 				</div>
 			</div>
@@ -149,5 +183,6 @@
 
 		<script src="{{ url_for('static', filename='bs/js/jquery.min.js') }}"></script>
 		<script src="{{ url_for('static', filename='bs/js/bootstrap.min.js') }}"></script>
+		<script src="{{ url_for('static', filename='js/app-header.js') }}"></script>
 	</body>
 </html>

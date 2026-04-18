@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Tracker - Food Prediction</title>
+    <title>AI Tracker - Daily Intake Forecast</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='bs/css/united.min.css') }}" />
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}" />
     <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}" />
@@ -11,110 +11,285 @@
 </head>
 <body class="ai-tracker-page">
     <div class="container-fluid" id="wrapper">
-			
-			<div class="row" id="homeJumbo">
-				<div class="overlay"></div>
-				<div class="col-lg-12">
-					<h1>
-						<a href="{{ url_for('main.dashboard') }}" class="brand-badge-link">AI TRACKER</a>
-					</h1>
-					
-					<div class="row t20">
-						<div class="col-lg-4 col-lg-offset-4">
-							<ul class="nav nav-pills nav-justified">
-							  <li role="presentation" class="active">
-							  	<a href="{{ url_for('main.dashboard') }}" title="Home">Home</a>
-							  </li>
-							  <li role="presentation" class='active'>
-                               <a href="{{ url_for('ai.ai_tracker_page') }}" title="AI Tracker" class="animated-border">AI Tracker</a>
-                               </li>
-							  {%if current_user.id==1 %}
-							  <li role="presentation">
-							  	<a href="{{ url_for('main.add') }}" title="Add Food Item">Add Food Item</a>
-							  </li>
-							  <li role="presentation">
-							  	<a href="{{ url_for('main.admin') }}" title="Add Food Item">Admin</a>
-							  </li>
-							  {%endif%}
-							  {% if current_user.is_authenticated %}
-							  <li role="presentation" class='active'>
-							  	<a href="{{ url_for('dashboard.dashboard_page') }}" title="Add Food Item">Dashboard</a>
-							  </li>
-							  <li role="presentation" class='active'>
-							  	<a href="{{ url_for('auth.logout') }}" title="Add Food Item">Logout</a>
-							  </li>
-                              <div class="user-badge">
-                  <div class="navbar-username">
-                    <a>
-                      <span
-                        class="glyphicon glyphicon-user"
-                        aria-hidden="true"
-                      ></span>
-                      {{ current_user.username }}
-                    </a>
-                  </div>
-                </div>
-							  {%else %}
-							  <li role="presentation" class='active'>
-							  	<a href="{{ url_for('auth.login') }}" title="Add Food Item">Login</a>
-							  </li>
-							  <li role="presentation" class='active'>
-							  	<a href="{{ url_for('auth.register') }}" title="Add Food Item">Registration</a>
-							  </li>
-							  {%endif%}
-							</ul>
-						</div>
-					</div>
-				</div>
-			</div>
-        <div class="container">
-            <h1 class="text-center my-4">AI Tracker & Prediction</h1>
-
-            <div class="row">
-                <div class="col-lg-6 mb-4">
-                    <div class="chart-section">
-                        <h3 class="text-center mb-4">Daily Calorie Prediction</h3>
-                        <div id="prediction-results-container" class="text-center">
-                            <div class="loading" id="prediction-loading-message">Loading prediction...</div>
-                            <div class="error is-hidden" id="prediction-error-message"></div>
-                            <div id="prediction-content" class="is-hidden">
-                                <div class="row text-center my-3">
-                                    <div class="col-md-6 mb-3">
-                                        <div class="stat-item">
-                                            <div class="stat-value" id="ml-predicted-total">--</div>
-                                            <div class="stat-label">Predicted Total (kcal)</div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6 mb-3">
-                                        <div class="stat-item">
-                                            <div class="stat-value" id="ml-prediction-status">--</div>
-                                            <div class="stat-label">Prediction Status</div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <p class="text-center text-muted mt-3"><small>This prediction will update based on your logged food.</small></p>
+        <div class="row" id="homeJumbo">
+            <div class="overlay"></div>
+            <div class="col-lg-12">
+                <h1>
+                    <a href="{{ url_for('main.dashboard') }}" class="brand-badge-link">AI TRACKER</a>
+                </h1>
+                <button
+                    type="button"
+                    class="mobile-nav-toggle"
+                    data-mobile-menu-toggle
+                    aria-expanded="false"
+                >
+                    <span class="icon-stack" aria-hidden="true">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </span>
+                    Menu
+                </button>
+                <div class="app-header-menu" data-mobile-menu>
+                    <div class="row t20">
+                        <div class="col-lg-4 col-lg-offset-4">
+                            <ul class="nav nav-pills nav-justified">
+                                <li role="presentation" class="active">
+                                    <a href="{{ url_for('main.dashboard') }}" title="Home">Home</a>
+                                </li>
+                                <li role="presentation" class='active'>
+                                    <a href="{{ url_for('ai.ai_tracker_page') }}" title="AI Tracker" class="animated-border">AI Tracker</a>
+                                </li>
+                                {%if current_user.id==1 %}
+                                <li role="presentation">
+                                    <a href="{{ url_for('main.add') }}" title="Add Food Item">Add Food Item</a>
+                                </li>
+                                <li role="presentation">
+                                    <a href="{{ url_for('main.admin') }}" title="Admin">Admin</a>
+                                </li>
+                                {%endif%}
+                                {% if current_user.is_authenticated %}
+                                <li role="presentation" class='active'>
+                                    <a href="{{ url_for('dashboard.dashboard_page') }}" title="Dashboard">Dashboard</a>
+                                </li>
+                                {%else %}
+                                <li role="presentation" class='active'>
+                                    <a href="{{ url_for('auth.login') }}" title="Login">Login</a>
+                                </li>
+                                <li role="presentation" class='active'>
+                                    <a href="{{ url_for('auth.register') }}" title="Registration">Registration</a>
+                                </li>
+                                {%endif%}
+                            </ul>
+                        </div>
+                    </div>
+                    {% if current_user.is_authenticated %}
+                    <div class="header-actions">
+                        <div class="user-badge user-badge-label">
+                            <div class="navbar-username">
+                                <a>
+                                    <span class="glyphicon glyphicon-user" aria-hidden="true"></span>
+                                    {{ current_user.username }}
+                                </a>
+                            </div>
+                        </div>
+                        <div class="user-badge user-badge-action">
+                            <div class="navbar-username">
+                                <a href="{{ url_for('auth.logout') }}" title="Logout">
+                                    <span class="glyphicon glyphicon-log-out" aria-hidden="true"></span>
+                                    Logout
+                                </a>
                             </div>
                         </div>
                     </div>
-                </div>
-
-                <div class="col-lg-6 mb-4">
-                    <div class="chart-section">
-                        <h3 class="text-center mb-4">Medical Chatbot</h3>
-                        <div class="chatbot-container">
-                            <div class="chat-messages" id="chat-messages">
-                                <div class="message bot">Hello! I'm your Medical Chatbot. How can I help you today?</div>
-                            </div>
-                            <form class="chat-input-form" id="chat-input-form">
-                                <input type="text" id="user-chat-input" placeholder="Ask me about medical info...">
-                                <button type="submit" class="btn btn-primary">Send</button>
-                            </form>
-                        </div>
-                        <p class="text-center text-muted mt-3"><small>This is RAG based Medical ChatBot Using Pincone Vector Database .</small></p>
-                    </div>
+                    {% endif %}
                 </div>
             </div>
         </div>
+
+        <div class="dashboard-shell ai-shell">
+            <section class="ai-hero">
+                <div class="ai-header">
+                    <p class="eyebrow">Smart Forecast</p>
+                    <h1 class="page-title">Daily Intake Forecast</h1>
+                    <p class="page-subtitle">
+                        See where today is likely to finish, compare it to your goal, and review how earlier daily forecasts matched your actual intake.
+                    </p>
+                </div>
+                <div class="ai-hero-note">
+                    <span class="hero-note-label">Forecast style</span>
+                    <span class="hero-note-value" id="modelSourceNoteTop">Loading...</span>
+                </div>
+            </section>
+
+            <div id="prediction-results-container">
+                <div class="loading forecast-loading" id="prediction-loading-message">Loading forecast...</div>
+                <div class="error is-hidden" id="prediction-error-message"></div>
+
+                <div id="prediction-content" class="is-hidden">
+                    <div class="forecast-layout">
+                        <section class="chart-section prediction-panel primary-forecast">
+                            <div class="forecast-panel-top">
+                                <div>
+                                    <p class="eyebrow">Today</p>
+                                    <h3 class="forecast-title">Projected Daily Intake</h3>
+                                    <p class="forecast-support" id="forecastWindowLabel">Live day forecast</p>
+                                </div>
+                                <div class="prediction-badge" id="predictionBadge">Loading...</div>
+                            </div>
+
+                            <div class="prediction-hero">
+                                <div class="prediction-main">
+                                    <p class="prediction-label">Projected finish</p>
+                                    <div class="prediction-value" id="ml-predicted-total">--</div>
+                                    <p class="prediction-footnote">
+                                        Goal <span id="prediction-target-inline">0</span> kcal
+                                    </p>
+                                </div>
+                                <div class="prediction-delta-card">
+                                    <span class="prediction-label">Target delta</span>
+                                    <span class="prediction-delta" id="prediction-delta">--</span>
+                                    <span class="prediction-footnote" id="ml-prediction-status">--</span>
+                                </div>
+                            </div>
+
+                            <div class="progress-panels">
+                                <div class="progress-card">
+                                    <div class="progress-card-head">
+                                        <span>Consumed vs forecast</span>
+                                        <span id="progressRatioLabel">0%</span>
+                                    </div>
+                                    <div class="forecast-progress-bar">
+                                        <span id="progressRatioBar"></span>
+                                    </div>
+                                </div>
+                                <div class="progress-card">
+                                    <div class="progress-card-head">
+                                        <span>Consumed vs target</span>
+                                        <span id="targetProgressRatioLabel">0%</span>
+                                    </div>
+                                    <div class="forecast-progress-bar is-target">
+                                        <span id="targetProgressRatioBar"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="analytics-strip prediction-stats">
+                                <div class="stat-card">
+                                    <span class="stat-card-label">Consumed so far</span>
+                                    <span class="stat-card-value" id="current-consumed">0</span>
+                                    <span class="stat-card-meta">kcal already logged today</span>
+                                </div>
+                                <div class="stat-card">
+                                    <span class="stat-card-label">Still projected</span>
+                                    <span class="stat-card-value" id="projected-remaining">0</span>
+                                    <span class="stat-card-meta">kcal likely later today</span>
+                                </div>
+                                <div class="stat-card">
+                                    <span class="stat-card-label">Meals so far</span>
+                                    <span class="stat-card-value" id="meal-count">0</span>
+                                    <span class="stat-card-meta">tracked servings today</span>
+                                </div>
+                                <div class="stat-card">
+                                    <span class="stat-card-label">Consistency score</span>
+                                    <span class="stat-card-value" id="consistency-score">0</span>
+                                    <span class="stat-card-meta">recent forecast stability</span>
+                                </div>
+                            </div>
+
+                            <div class="macro-grid prediction-macro-grid">
+                                <div class="macro-card macro-card-protein">
+                                    <span class="metric-label">Protein</span>
+                                    <span class="metric-value"><span id="current-protein">0</span>g</span>
+                                </div>
+                                <div class="macro-card macro-card-carbs">
+                                    <span class="metric-label">Carbs</span>
+                                    <span class="metric-value"><span id="current-carbs">0</span>g</span>
+                                </div>
+                                <div class="macro-card macro-card-fat">
+                                    <span class="metric-label">Fat</span>
+                                    <span class="metric-value"><span id="current-fat">0</span>g</span>
+                                </div>
+                            </div>
+                        </section>
+
+                        <div class="forecast-side-column">
+                            <section class="chart-section info-panel">
+                                <p class="eyebrow">Forecast Notes</p>
+                                <h3>What This Looks At</h3>
+                                <ul class="info-list">
+                                    <li>Your current calories, macros, servings, and time passed today.</li>
+                                    <li>How similar days and recent logs usually finish.</li>
+                                    <li>Whether today is pacing above, near, or below your goal.</li>
+                                    <li>How closely recent forecasts matched the final logged totals.</li>
+                                </ul>
+                            </section>
+
+                            <section class="chart-section signal-panel">
+                                <p class="eyebrow">Signals</p>
+                                <div class="signal-grid">
+                                    <div class="signal-card">
+                                        <span class="signal-label">Recent average</span>
+                                        <span class="signal-value" id="avg-recent-kcal">0 kcal</span>
+                                    </div>
+                                    <div class="signal-card">
+                                        <span class="signal-label">Same weekday</span>
+                                        <span class="signal-value" id="avg-weekday-kcal">0 kcal</span>
+                                    </div>
+                                    <div class="signal-card">
+                                        <span class="signal-label">History depth</span>
+                                        <span class="signal-value" id="history-used">0 days</span>
+                                    </div>
+                                    <div class="signal-card">
+                                        <span class="signal-label">Forecast engine</span>
+                                        <span class="signal-value" id="model-source-note">--</span>
+                                    </div>
+                                </div>
+                            </section>
+                        </div>
+                    </div>
+
+                    <section class="chart-section history-panel">
+                        <div class="panel-heading-row">
+                            <div>
+                                <p class="eyebrow">Recent Forecasts</p>
+                                <h3>Previous Day Projection Check</h3>
+                            </div>
+                            <div class="history-chip" id="historyChip">6-day review</div>
+                        </div>
+                        <p class="section-copy">
+                            Pick a date to review the most recent completed forecast checks up to that day. This section always shows up to 6 cards.
+                        </p>
+                        <div class="history-filter-row">
+                            <label class="history-filter">
+                                <span>Review date</span>
+                                <input id="historyDateFilter" type="date" class="form-control input-sm" />
+                            </label>
+                        </div>
+                        <div class="history-grid" id="historyGrid"></div>
+                        <div class="empty-history is-hidden" id="historyEmptyState">
+                            Not enough previous log history yet to compare earlier daily forecasts.
+                        </div>
+                    </section>
+
+                </div>
+            </div>
+        </div>
+
+        <button
+            type="button"
+            class="medical-fab"
+            id="medicalChatToggle"
+            aria-label="Open medical chatbot"
+            aria-controls="medicalChatDrawer"
+            aria-expanded="false"
+        >
+            <span class="glyphicon glyphicon-comment" aria-hidden="true"></span>
+        </button>
+
+        <aside class="medical-drawer" id="medicalChatDrawer" aria-hidden="true">
+            <section class="chart-section medical-panel medical-panel-drawer">
+                <div class="medical-panel-header">
+                    <div>
+                        <p class="eyebrow">Medical Chatbot</p>
+                        <h3>Quick Health Q&amp;A</h3>
+                    </div>
+                    <button type="button" class="medical-close-btn" id="medicalChatClose" aria-label="Close medical chatbot">
+                        <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                    </button>
+                </div>
+                <div class="chatbot-container">
+                    <div class="chat-messages" id="chat-messages">
+                        <div class="message bot">Hello! I'm your Medical Chatbot. How can I help you today?</div>
+                    </div>
+                    <form class="chat-input-form" id="chat-input-form">
+                        <input type="text" id="user-chat-input" placeholder="Ask me about medical info...">
+                        <button type="submit" class="btn btn-primary">Send</button>
+                    </form>
+                </div>
+                <p class="medical-note"><small>This is a RAG-based medical assistant using Pinecone vector search.</small></p>
+            </section>
+        </aside>
 
         <footer>
             <div class="row pad">
@@ -123,69 +298,172 @@
                 </div>
             </div>
         </footer>
-
     </div>
 
     <script src="{{ url_for('static', filename='bs/js/jquery.min.js') }}"></script>
     <script src="{{ url_for('static', filename='bs/js/bootstrap.min.js') }}"></script>
 
+    <script src="{{ url_for('static', filename='js/app-header.js') }}"></script>
     <script>
-   
     const API_BASE = '/ai-tracker';
-   
-    
     const CHATBOT_API_URL = 'http://127.0.0.1:5001/chat';
+    const historyFilters = {
+        date: ''
+    };
 
-    
     function showContent(containerId, contentIdToShow) {
         const container = document.getElementById(containerId);
         if (!container) return;
         const allContentDivs = container.querySelectorAll('.loading, .error, #prediction-content');
-        allContentDivs.forEach(div => div.style.display = 'none');
+        allContentDivs.forEach(div => {
+            div.style.display = 'none';
+            div.classList.add('is-hidden');
+        });
         const contentToShow = document.getElementById(contentIdToShow);
         if (contentToShow) {
+            contentToShow.classList.remove('is-hidden');
             contentToShow.style.display = 'block';
         }
     }
 
-    function showLoadingPrediction(containerId, message = 'Loading prediction...') {
+    function showLoadingPrediction(containerId, message = 'Loading forecast...') {
         showContent(containerId, 'prediction-loading-message');
         document.getElementById('prediction-loading-message').textContent = message;
+        document.getElementById('predictionBadge').textContent = 'Loading...';
+        document.getElementById('predictionBadge').className = 'prediction-badge';
     }
 
     function showErrorPrediction(containerId, message) {
         showContent(containerId, 'prediction-error-message');
         document.getElementById('prediction-error-message').innerHTML = `Error: ${message}<br><small>Please try refreshing the page</small>`;
+        document.getElementById('predictionBadge').textContent = 'Unavailable';
+        document.getElementById('predictionBadge').className = 'prediction-badge badge-danger';
     }
 
-   
+    function formatNumber(value) {
+        return new Intl.NumberFormat('en-US', {
+            maximumFractionDigits: value % 1 === 0 ? 0 : 1
+        }).format(value);
+    }
+
+    function updatePredictionStatusBadge(data) {
+        const badge = document.getElementById('predictionBadge');
+        badge.textContent = data.prediction_status;
+        badge.className = `prediction-badge badge-${data.status_tone || 'neutral'}`;
+    }
+
+    function setProgressBar(barId, labelId, value) {
+        const normalized = Math.max(0, Math.min(100, Number(value || 0)));
+        document.getElementById(barId).style.width = `${normalized}%`;
+        document.getElementById(labelId).textContent = `${normalized}%`;
+    }
+
+    function renderHistoryCards(entries) {
+        const historyGrid = document.getElementById('historyGrid');
+        const emptyState = document.getElementById('historyEmptyState');
+        historyGrid.innerHTML = '';
+
+        if (!entries || !entries.length) {
+            emptyState.classList.remove('is-hidden');
+            return;
+        }
+
+        emptyState.classList.add('is-hidden');
+
+        entries.forEach((entry) => {
+            const deltaPrefix = entry.variance >= 0 ? '+' : '';
+            const card = document.createElement('article');
+            card.className = 'history-card';
+            card.innerHTML = `
+                <div class="history-card-top">
+                    <div>
+                        <p class="history-date">${entry.dateLabel}</p>
+                    </div>
+                    <span class="history-chip subtle">${entry.hindsightLabel}</span>
+                </div>
+                <div class="history-metrics">
+                    <div>
+                        <span class="history-label">Forecast</span>
+                        <strong>${formatNumber(entry.forecastedCalories)} kcal</strong>
+                    </div>
+                    <div>
+                        <span class="history-label">Actual</span>
+                        <strong>${formatNumber(entry.actualCalories)} kcal</strong>
+                    </div>
+                </div>
+                <div class="history-footer">
+                    <span>${formatNumber(entry.partialCalories)} kcal logged by forecast time</span>
+                    <span>${deltaPrefix}${formatNumber(entry.variance)} kcal gap</span>
+                </div>
+            `;
+            historyGrid.appendChild(card);
+        });
+    }
+
+    function readHistoryFiltersFromUi() {
+        historyFilters.date = document.getElementById('historyDateFilter').value || '';
+    }
+
+    function syncHistoryFiltersToUi(data) {
+        const filters = data.history_filters || {};
+        if (filters.reference_date) {
+            document.getElementById('historyDateFilter').value = String(filters.reference_date);
+        }
+        document.getElementById('historyChip').textContent =
+            filters.reference_label ? `Up to ${filters.reference_label}` : '6-day review';
+    }
+
     async function fetchDailyCaloriePrediction() {
         showLoadingPrediction('prediction-results-container');
+        readHistoryFiltersFromUi();
         try {
-            const response = await fetch(`${API_BASE}/predict_calories`);
+            const params = new URLSearchParams();
+            if (historyFilters.date) {
+                params.set('historyDate', historyFilters.date);
+            }
+            const response = await fetch(`${API_BASE}/predict_calories?${params.toString()}`);
             if (!response.ok) {
                 throw new Error(`HTTP ${response.status}: ${response.statusText}`);
             }
+
             const data = await response.json();
-            document.getElementById('ml-predicted-total').textContent = Math.round(data.predicted_total_calories);
+
+            document.getElementById('ml-predicted-total').textContent = `${formatNumber(data.predicted_total_calories)} kcal`;
+            document.getElementById('prediction-target-inline').textContent = formatNumber(data.daily_target_kcal);
             document.getElementById('ml-prediction-status').textContent = data.prediction_status;
-            const statusElement = document.getElementById('ml-prediction-status');
-            statusElement.style.color = '';
-            if (data.prediction_status.includes('Exceed')) {
-                statusElement.style.color = '#dc3545';
-            } else if (data.prediction_status.includes('Below')) {
-                statusElement.style.color = '#ffc107';
-            } else if (data.prediction_status.includes('Track')) {
-                statusElement.style.color = '#28a745';
-            }
+            document.getElementById('prediction-delta').textContent =
+                `${data.deviation_from_target_kcal >= 0 ? '+' : ''}${formatNumber(data.deviation_from_target_kcal)} kcal`;
+            document.getElementById('forecastWindowLabel').textContent = data.forecast_window_label || 'Live day forecast';
+
+            document.getElementById('current-consumed').textContent = formatNumber(data.current_consumed_kcal);
+            document.getElementById('projected-remaining').textContent = formatNumber(data.projected_remaining_kcal);
+            document.getElementById('meal-count').textContent = formatNumber(data.meal_count_so_far);
+            document.getElementById('consistency-score').textContent = `${formatNumber(data.consistency_score || 0)}%`;
+
+            document.getElementById('current-protein').textContent = formatNumber(data.current_protein_g);
+            document.getElementById('current-carbs').textContent = formatNumber(data.current_carbs_g);
+            document.getElementById('current-fat').textContent = formatNumber(data.current_fat_g);
+
+            document.getElementById('avg-recent-kcal').textContent = `${formatNumber(data.avg_recent_day_kcal)} kcal`;
+            document.getElementById('avg-weekday-kcal').textContent = `${formatNumber(data.avg_same_day_kcal)} kcal`;
+            document.getElementById('history-used').textContent =
+                `${formatNumber(data.history_days_used)} recent / ${formatNumber(data.weekday_history_used)} weekday`;
+            document.getElementById('model-source-note').textContent = data.model_quality_note || 'forecasting active';
+            document.getElementById('modelSourceNoteTop').textContent = data.model_quality_note || 'forecasting active';
+
+            setProgressBar('progressRatioBar', 'progressRatioLabel', data.progress_ratio);
+            setProgressBar('targetProgressRatioBar', 'targetProgressRatioLabel', data.target_progress_ratio);
+            syncHistoryFiltersToUi(data);
+            renderHistoryCards(data.recent_prediction_history || []);
+
+            updatePredictionStatusBadge(data);
             showContent('prediction-results-container', 'prediction-content');
         } catch (error) {
             console.error("Error fetching daily calorie prediction:", error);
-            showErrorPrediction('prediction-results-container', 'Failed to load prediction');
+            showErrorPrediction('prediction-results-container', 'Failed to load forecast');
         }
     }
 
-    
     async function sendChatMessage(event) {
         event.preventDefault();
         const userInputElement = document.getElementById('user-chat-input');
@@ -193,17 +471,15 @@
         if (!userMessage) return;
 
         appendMessage('user', userMessage);
-        userInputElement.value = ''; 
-        appendMessage('bot', 'Thinking...'); 
+        userInputElement.value = '';
+        appendMessage('bot', 'Thinking...');
 
         try {
-            
             const response = await fetch(CHATBOT_API_URL, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                
                 body: JSON.stringify({
                     message: userMessage
                 })
@@ -214,24 +490,20 @@
             }
 
             const botResponseData = await response.json();
-
-            
             const messagesContainer = document.getElementById('chat-messages');
             if (messagesContainer.lastChild.textContent === 'Thinking...') {
                 messagesContainer.removeChild(messagesContainer.lastChild);
             }
 
-            
             appendMessage('bot', botResponseData.response);
 
         } catch (error) {
             console.error("Chatbot API error:", error);
-            
             const messagesContainer = document.getElementById('chat-messages');
             if (messagesContainer.lastChild.textContent === 'Thinking...') {
                 messagesContainer.lastChild.textContent = 'Error connecting to the chatbot. Please try again later.';
             } else {
-                 appendMessage('bot', 'Error connecting to the chatbot. Please try again later.');
+                appendMessage('bot', 'Error connecting to the chatbot. Please try again later.');
             }
         }
     }
@@ -245,11 +517,30 @@
         messagesContainer.scrollTop = messagesContainer.scrollHeight;
     }
 
-    
+    function setMedicalDrawerState(isOpen) {
+        const drawer = document.getElementById('medicalChatDrawer');
+        const toggle = document.getElementById('medicalChatToggle');
+        drawer.classList.toggle('is-open', isOpen);
+        drawer.setAttribute('aria-hidden', isOpen ? 'false' : 'true');
+        toggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    }
+
     document.addEventListener('DOMContentLoaded', function() {
+        const historyDateFilter = document.getElementById('historyDateFilter');
+        const yesterday = new Date();
+        yesterday.setDate(yesterday.getDate() - 1);
+        historyDateFilter.max = yesterday.toISOString().split('T')[0];
         fetchDailyCaloriePrediction();
         document.getElementById('chat-input-form').addEventListener('submit', sendChatMessage);
+        historyDateFilter.addEventListener('change', fetchDailyCaloriePrediction);
+        document.getElementById('medicalChatToggle').addEventListener('click', function() {
+            const drawer = document.getElementById('medicalChatDrawer');
+            setMedicalDrawerState(!drawer.classList.contains('is-open'));
+        });
+        document.getElementById('medicalChatClose').addEventListener('click', function() {
+            setMedicalDrawerState(false);
+        });
     });
-</script>
+    </script>
 </body>
 </html>

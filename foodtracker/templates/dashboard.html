@@ -32,147 +32,263 @@
               >DASHBOARD</a
             >
           </h1>
+          <button
+            type="button"
+            class="mobile-nav-toggle"
+            data-mobile-menu-toggle
+            aria-expanded="false"
+          >
+            <span class="icon-stack" aria-hidden="true">
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </span>
+            Menu
+          </button>
+          <div class="app-header-menu" data-mobile-menu>
+            <div class="row t20">
+              <div class="col-lg-4 col-lg-offset-4">
+                <ul class="nav nav-pills nav-justified">
+                  <li role="presentation" class="active">
+                    <a href="{{ url_for('main.dashboard') }}" title="Home">Home</a>
+                  </li>
+                  <li role="presentation" class="active">
+                    <a
+                      href="{{ url_for('ai.ai_tracker_page') }}"
+                      title="AI Tracker"
+                      class="animated-border"
+                      >AI Tracker</a
+                    >
+                  </li>
+                  {%if current_user.id==1 %}
+                  <li role="presentation">
+                    <a href="{{ url_for('main.add') }}" title="Add Food Item"
+                      >Add Food Item</a
+                    >
+                  </li>
+                  <li role="presentation">
+                    <a href="{{ url_for('main.admin') }}" title="Add Food Item"
+                      >Admin</a
+                    >
+                  </li>
+                  {%endif%} {% if current_user.is_authenticated %}
+                  <li role="presentation" class="active">
+                    <a
+                      href="{{ url_for('dashboard.dashboard_page') }}"
+                      title="Add Food Item"
+                      >Dashboard</a
+                    >
+                  </li>
 
-          <div class="row t20">
-            <div class="col-lg-4 col-lg-offset-4">
-              <ul class="nav nav-pills nav-justified">
-                <li role="presentation" class="active">
-                  <a href="{{ url_for('main.dashboard') }}" title="Home">Home</a>
-                </li>
-                <li role="presentation" class="active">
-                  <a
-                    href="{{ url_for('ai.ai_tracker_page') }}"
-                    title="AI Tracker"
-                    class="animated-border"
-                    >AI Tracker</a
-                  >
-                </li>
-                {%if current_user.id==1 %}
-                <li role="presentation">
-                  <a href="{{ url_for('main.add') }}" title="Add Food Item"
-                    >Add Food Item</a
-                  >
-                </li>
-                <li role="presentation">
-                  <a href="{{ url_for('main.admin') }}" title="Add Food Item"
-                    >Admin</a
-                  >
-                </li>
-                {%endif%} {% if current_user.is_authenticated %}
-                <li role="presentation" class="active">
-                  <a
-                    href="{{ url_for('dashboard.dashboard_page') }}"
-                    title="Add Food Item"
-                    >Dashboard</a
-                  >
-                </li>
-                <li role="presentation" class="active">
-                  <a href="{{ url_for('auth.logout') }}" title="Add Food Item"
-                    >Logout</a
-                  >
-                </li>
-                <div class="user-badge">
-                  <div class="navbar-username">
-                    <a>
-                      <span
-                        class="glyphicon glyphicon-user"
-                        aria-hidden="true"
-                      ></span>
-                      {{ current_user.username }}
-                    </a>
-                  </div>
+                  {%else %}
+                  <li role="presentation" class="active">
+                    <a href="{{ url_for('auth.login') }}" title="Add Food Item"
+                      >Login</a
+                    >
+                  </li>
+                  <li role="presentation" class="active">
+                    <a href="{{ url_for('auth.register') }}" title="Add Food Item"
+                      >Registration</a
+                    >
+                  </li>
+                  {%endif%}
+                </ul>
+              </div>
+            </div>
+            {% if current_user.is_authenticated %}
+            <div class="header-actions">
+              <div class="user-badge user-badge-label">
+                <div class="navbar-username">
+                  <a>
+                    <span
+                      class="glyphicon glyphicon-user"
+                      aria-hidden="true"
+                    ></span>
+                    {{ current_user.username }}
+                  </a>
                 </div>
-
-                {%else %}
-                <li role="presentation" class="active">
-                  <a href="{{ url_for('auth.login') }}" title="Add Food Item"
-                    >Login</a
-                  >
-                </li>
-                <li role="presentation" class="active">
-                  <a href="{{ url_for('auth.register') }}" title="Add Food Item"
-                    >Registration</a
-                  >
-                </li>
-                {%endif%}
-              </ul>
+              </div>
+              <div class="user-badge user-badge-action">
+                <div class="navbar-username">
+                  <a href="{{ url_for('auth.logout') }}" title="Logout">
+                    <span
+                      class="glyphicon glyphicon-log-out"
+                      aria-hidden="true"
+                    ></span>
+                    Logout
+                  </a>
+                </div>
+              </div>
             </div>
+            {% endif %}
           </div>
         </div>
       </div>
 
-      <h1 class="my-4 text-center"></h1>
-
-      <div class="row">
-        <div class="col-lg-6">
-          <div class="chart-section">
-            <h3>Energy Summary Today</h3>
-            <div class="doughnut-chart-container">
-              <canvas id="energySummaryChart"></canvas>
+      <div class="dashboard-shell">
+        <div class="row">
+          <div class="col-lg-6">
+            <div class="chart-section summary-panel">
+              <div class="panel-heading-row">
+                <div>
+                  <p class="eyebrow">Today</p>
+                  <h3>Energy Summary</h3>
+                </div>
+              </div>
+              <div class="doughnut-chart-container">
+                <canvas id="energySummaryChart"></canvas>
+              </div>
+              <div class="metric-strip text-center mt-3">
+                <div class="metric-pill">
+                  <span class="metric-label">Target</span>
+                  <span class="metric-value"><span id="summary-target-kcal">0</span> kcal</span>
+                </div>
+                <div class="metric-pill">
+                  <span class="metric-label">Consumed</span>
+                  <span class="metric-value"><span id="summary-consumed-kcal">0</span> kcal</span>
+                </div>
+                <div class="metric-pill">
+                  <span class="metric-label">Remaining</span>
+                  <span class="metric-value"><span id="summary-remaining-kcal">0</span> kcal</span>
+                </div>
+              </div>
             </div>
-            <div class="text-center mt-3">
-              <p>
-                <strong>Target:</strong>
-                <span id="summary-target-kcal">0</span> kcal
-              </p>
-              <p>
-                <strong>Consumed:</strong>
-                <span id="summary-consumed-kcal">0</span> kcal
-              </p>
-              <p>
-                <strong>Remaining:</strong>
-                <span id="summary-remaining-kcal">0</span> kcal
-              </p>
+          </div>
+          <div class="col-lg-6">
+            <div class="chart-section summary-panel">
+              <div class="panel-heading-row">
+                <div>
+                  <p class="eyebrow">Today</p>
+                  <h3>Macronutrient Breakdown</h3>
+                </div>
+              </div>
+              <div class="chart-container summary-chart-container">
+                <canvas id="macroSummaryChart"></canvas>
+              </div>
+              <div class="macro-grid text-center mt-3">
+                <div class="macro-card macro-card-protein">
+                  <span class="metric-label">Protein</span>
+                  <span class="metric-value"><span id="summary-protein">0</span>g / <span id="summary-protein-target">0</span>g</span>
+                </div>
+                <div class="macro-card macro-card-carbs">
+                  <span class="metric-label">Carbs</span>
+                  <span class="metric-value"><span id="summary-carbs">0</span>g / <span id="summary-carbs-target">0</span>g</span>
+                </div>
+                <div class="macro-card macro-card-fat">
+                  <span class="metric-label">Fat</span>
+                  <span class="metric-value"><span id="summary-fat">0</span>g / <span id="summary-fat-target">0</span>g</span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
-        <div class="col-lg-6">
-          <div class="chart-section">
-            <h3>Today's Macronutrient Breakdown</h3>
-            <div class="chart-container">
-              <canvas id="macroSummaryChart"></canvas>
-            </div>
-            <div class="text-center mt-3">
-              <p>
-                <strong>Protein:</strong> <span id="summary-protein">0</span>g /
-                <span id="summary-protein-target">0</span>g
-              </p>
-              <p>
-                <strong>Carbs:</strong> <span id="summary-carbs">0</span>g /
-                <span id="summary-carbs-target">0</span>g
-              </p>
-              <p>
-                <strong>Fat:</strong> <span id="summary-fat">0</span>g /
-                <span id="summary-fat-target">0</span>g
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
 
-      <div class="row">
-        <div class="col-lg-12">
-          <div class="chart-section">
-            <h3>Daily Calories Consumed (Last 3 Weeks)</h3>
-            <div class="controls">
-              <select id="timeRangeSelect">
-                <option value="3weeks">Last 3 weeks</option>
-                <option value="4weeks">Last 4 weeks</option>
-                <option value="lastmonth">Last Month</option>
-              </select>
-              <select id="dayTypeSelect">
-                <option value="all">All Days</option>
-                <option value="weekdays">Weekdays</option>
-                <option value="weekends">Weekends</option>
-              </select>
-              <select id="unitSelect">
-                <option value="kcal">kcal</option>
-                <option value="g">grams</option>
-              </select>
-              <button title="More Options">...</button>
-            </div>
-            <div class="chart-container">
-              <canvas id="caloriesChart"></canvas>
+        <div class="row">
+          <div class="col-lg-12">
+            <div class="chart-section chart-section-large">
+              <div class="chart-header">
+                <div>
+                  <p class="eyebrow">Trends</p>
+                  <h3 id="chartHeading">Nutrition Trend Explorer</h3>
+                  <p class="chart-subtitle" id="chartSubheading">
+                    Review total intake, macro composition, and target pacing across your selected time window.
+                  </p>
+                </div>
+                <div class="chart-summary-inline">
+                  <span class="summary-chip">
+                    <span class="summary-chip-label">Visible periods</span>
+                    <span class="summary-chip-value" id="visibleBucketCount">0</span>
+                  </span>
+                  <span class="summary-chip">
+                    <span class="summary-chip-label">Logged days</span>
+                    <span class="summary-chip-value" id="loggedDayCount">0</span>
+                  </span>
+                </div>
+              </div>
+
+              <div class="controls-grid">
+                <label class="control-group">
+                  <span class="control-label">Range</span>
+                  <select id="timeRangeSelect">
+                    <option value="7d">Last 7 days</option>
+                    <option value="14d">Last 14 days</option>
+                    <option value="30d" selected>Last 30 days</option>
+                    <option value="90d">Last 90 days</option>
+                  </select>
+                </label>
+                <label class="control-group">
+                  <span class="control-label">Days</span>
+                  <select id="dayTypeSelect">
+                    <option value="all" selected>All days</option>
+                    <option value="weekdays">Weekdays only</option>
+                    <option value="weekends">Weekends only</option>
+                  </select>
+                </label>
+                <label class="control-group">
+                  <span class="control-label">Unit</span>
+                  <select id="unitSelect">
+                    <option value="kcal" selected>Calories</option>
+                    <option value="g">Grams</option>
+                  </select>
+                </label>
+                <label class="control-group">
+                  <span class="control-label">View</span>
+                  <select id="chartViewSelect">
+                    <option value="stacked" selected>Stacked macros</option>
+                    <option value="total">Total trend</option>
+                    <option value="target">Target vs actual</option>
+                  </select>
+                </label>
+                <label class="control-group">
+                  <span class="control-label">Group</span>
+                  <select id="groupBySelect">
+                    <option value="day" selected>Daily</option>
+                    <option value="week">Weekly</option>
+                  </select>
+                </label>
+                <label class="control-group">
+                  <span class="control-label">Coverage</span>
+                  <select id="coverageSelect">
+                    <option value="logged" selected>Logged days only</option>
+                    <option value="all">Include empty days</option>
+                  </select>
+                </label>
+              </div>
+
+              <div class="analytics-strip" id="chartStats">
+                <div class="stat-card">
+                  <span class="stat-card-label">Total intake</span>
+                  <span class="stat-card-value" id="statTotalIntake">0</span>
+                  <span class="stat-card-meta" id="statTotalUnit">kcal in view</span>
+                </div>
+                <div class="stat-card">
+                  <span class="stat-card-label">Average</span>
+                  <span class="stat-card-value" id="statAveragePeriod">0</span>
+                  <span class="stat-card-meta" id="statAverageMeta">per visible period</span>
+                </div>
+                <div class="stat-card">
+                  <span class="stat-card-label">Peak period</span>
+                  <span class="stat-card-value" id="statPeakValue">0</span>
+                  <span class="stat-card-meta" id="statPeakLabel">No data</span>
+                </div>
+                <div class="stat-card">
+                  <span class="stat-card-label">Logged-day avg</span>
+                  <span class="stat-card-value" id="statLoggedAverage">0</span>
+                  <span class="stat-card-meta">ignores empty periods</span>
+                </div>
+              </div>
+
+              <div class="chart-canvas-shell">
+                <div class="chart-container chart-container-lg">
+                  <canvas id="caloriesChart"></canvas>
+                </div>
+                <div class="chart-empty-state is-hidden" id="chartEmptyState">
+                  <h4>No chart data yet</h4>
+                  <p>
+                    Try switching to a wider range, using weekly grouping, or log a few more meals to build a clearer trend.
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -190,93 +306,317 @@
     <script src="{{ url_for('static', filename='bs/js/jquery.min.js') }}"></script>
     <script src="{{ url_for('static', filename='bs/js/bootstrap.min.js') }}"></script>
 
+    <script src="{{ url_for('static', filename='js/app-header.js') }}"></script>
     <script>
       let caloriesChartInstance = null;
       let energySummaryChartInstance = null;
       let macroSummaryChartInstance = null;
 
+      function getDashboardFilters() {
+        return {
+          range: document.getElementById("timeRangeSelect").value,
+          dayType: document.getElementById("dayTypeSelect").value,
+          unit: document.getElementById("unitSelect").value,
+          chartView: document.getElementById("chartViewSelect").value,
+          groupBy: document.getElementById("groupBySelect").value,
+          coverage: document.getElementById("coverageSelect").value,
+        };
+      }
+
+      function buildChartUrl(filters) {
+        const params = new URLSearchParams({
+          range: filters.range,
+          dayType: filters.dayType,
+          unit: filters.unit,
+          groupBy: filters.groupBy,
+          coverage: filters.coverage,
+        });
+        return `/dashboard/calories_chart_data?${params.toString()}`;
+      }
+
+      function formatNumber(value) {
+        return new Intl.NumberFormat("en-US", {
+          maximumFractionDigits: value % 1 === 0 ? 0 : 1,
+        }).format(value);
+      }
+
+      function getUnitLabel(unit) {
+        return unit === "g" ? "g" : "kcal";
+      }
+
+      function getRangeLabel(range) {
+        const labels = {
+          "7d": "Last 7 days",
+          "14d": "Last 14 days",
+          "30d": "Last 30 days",
+          "90d": "Last 90 days",
+        };
+        return labels[range] || "Selected range";
+      }
+
+      function getViewTitle(view) {
+        if (view === "total") {
+          return "Total Intake Trend";
+        }
+        if (view === "target") {
+          return "Target vs Actual";
+        }
+        return "Macro Contribution by Period";
+      }
+
+      function getViewSubtitle(filters, data) {
+        const grouping = filters.groupBy === "week" ? "weekly" : "daily";
+        const coverage =
+          filters.coverage === "all" ? "including empty days" : "showing logged periods only";
+        const unit = filters.unit === "g" ? "grams" : "calories";
+        return `${getRangeLabel(filters.range)} | ${grouping} grouping | ${coverage} | ${unit} | ${data.summary.loggedDays} logged day(s)`;
+      }
+
+      function createGradient(ctx, chartArea, start, end) {
+        const gradient = ctx.createLinearGradient(0, chartArea.bottom, 0, chartArea.top);
+        gradient.addColorStop(0, start);
+        gradient.addColorStop(1, end);
+        return gradient;
+      }
+
+      function updateChartSummary(filters, data) {
+        const unitLabel = getUnitLabel(filters.unit);
+        document.getElementById("chartHeading").textContent = getViewTitle(filters.chartView);
+        document.getElementById("chartSubheading").textContent = getViewSubtitle(filters, data);
+        document.getElementById("visibleBucketCount").textContent = data.summary.visibleBuckets;
+        document.getElementById("loggedDayCount").textContent = data.summary.loggedDays;
+        document.getElementById("statTotalIntake").textContent = formatNumber(data.summary.totalConsumed);
+        document.getElementById("statTotalUnit").textContent = `${unitLabel} in view`;
+        document.getElementById("statAveragePeriod").textContent = formatNumber(data.summary.averagePerBucket);
+        document.getElementById("statAverageMeta").textContent = `per ${filters.groupBy === "week" ? "week" : "visible day"}`;
+        document.getElementById("statPeakValue").textContent = formatNumber(data.summary.peakValue);
+        document.getElementById("statPeakLabel").textContent = data.summary.peakLabel || "No data";
+        document.getElementById("statLoggedAverage").textContent = formatNumber(data.summary.averagePerLoggedDay);
+      }
+
+      function updateChartEmptyState(hasData) {
+        const emptyState = document.getElementById("chartEmptyState");
+        const canvas = document.getElementById("caloriesChart");
+        if (hasData) {
+          emptyState.classList.add("is-hidden");
+          canvas.classList.remove("is-hidden");
+        } else {
+          emptyState.classList.remove("is-hidden");
+          canvas.classList.add("is-hidden");
+        }
+      }
+
+      function buildStackedDatasets(chart, data) {
+        return data.datasets.map((dataset) => ({
+          type: "bar",
+          label: dataset.label,
+          data: dataset.data,
+          backgroundColor: dataset.backgroundColor,
+          borderColor: dataset.borderColor,
+          borderWidth: 1,
+          borderRadius: 10,
+          borderSkipped: false,
+          stack: "macros",
+          maxBarThickness: 42,
+        }));
+      }
+
+      function buildTotalDatasets(chart, data, filters) {
+        const chartArea = chart.chartArea;
+        const totalGradient = chartArea
+          ? createGradient(chart.ctx, chartArea, "rgba(14, 165, 233, 0.35)", "rgba(14, 165, 233, 0.02)")
+          : "rgba(14, 165, 233, 0.18)";
+
+        return [
+          {
+            type: "line",
+            label: "Total intake",
+            data: data.totals.data,
+            borderColor: "#0284c7",
+            backgroundColor: totalGradient,
+            fill: true,
+            borderWidth: 3,
+            pointRadius: 4,
+            pointHoverRadius: 6,
+            pointBackgroundColor: "#0284c7",
+            tension: 0.35,
+          },
+          {
+            type: "line",
+            label: "Average",
+            data: data.averages.data,
+            borderColor: "#94a3b8",
+            borderDash: [6, 6],
+            borderWidth: 2,
+            pointRadius: 0,
+            tension: 0.2,
+          },
+        ];
+      }
+
+      function buildTargetDatasets(chart, data) {
+        return [
+          {
+            type: "bar",
+            label: "Actual",
+            data: data.totals.data,
+            backgroundColor: "#22c55e",
+            borderColor: "#16a34a",
+            borderWidth: 1,
+            borderRadius: 10,
+            borderSkipped: false,
+            maxBarThickness: 34,
+          },
+          {
+            type: "line",
+            label: "Target",
+            data: data.targets.data,
+            borderColor: "#f97316",
+            backgroundColor: "rgba(249, 115, 22, 0.15)",
+            borderWidth: 2,
+            borderDash: [8, 6],
+            pointRadius: 3,
+            pointHoverRadius: 5,
+            pointBackgroundColor: "#f97316",
+            tension: 0,
+          },
+        ];
+      }
+
+      function renderIntakeChart(data, filters) {
+        const canvas = document.getElementById("caloriesChart");
+        const ctx = canvas.getContext("2d");
+
+        if (caloriesChartInstance) {
+          caloriesChartInstance.destroy();
+        }
+
+        updateChartSummary(filters, data);
+        updateChartEmptyState(data.meta.hasData);
+
+        if (!data.meta.hasData) {
+          return;
+        }
+
+        const datasetsBuilder = {
+          stacked: buildStackedDatasets,
+          total: buildTotalDatasets,
+          target: buildTargetDatasets,
+        };
+
+        const chartType = filters.chartView === "stacked" ? "bar" : "line";
+
+        caloriesChartInstance = new Chart(ctx, {
+          type: chartType,
+          data: {
+            labels: data.labels,
+            datasets: [],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: {
+              mode: "index",
+              intersect: false,
+            },
+            layout: {
+              padding: {
+                top: 8,
+                right: 12,
+                bottom: 8,
+                left: 12,
+              },
+            },
+            scales: {
+              x: {
+                stacked: filters.chartView === "stacked",
+                grid: {
+                  display: false,
+                },
+                ticks: {
+                  color: "#64748b",
+                  maxRotation: 0,
+                  autoSkipPadding: 16,
+                },
+              },
+              y: {
+                stacked: filters.chartView === "stacked",
+                beginAtZero: true,
+                grid: {
+                  color: "rgba(148, 163, 184, 0.18)",
+                  drawBorder: false,
+                },
+                ticks: {
+                  color: "#64748b",
+                },
+                title: {
+                  display: true,
+                  text: filters.unit === "g" ? "Grams" : "Calories (kcal)",
+                  color: "#475569",
+                  font: {
+                    size: 12,
+                    weight: "600",
+                  },
+                },
+              },
+            },
+            plugins: {
+              legend: {
+                position: "bottom",
+                labels: {
+                  usePointStyle: true,
+                  boxWidth: 10,
+                  color: "#334155",
+                  padding: 18,
+                },
+              },
+              tooltip: {
+                backgroundColor: "rgba(15, 23, 42, 0.94)",
+                titleColor: "#f8fafc",
+                bodyColor: "#e2e8f0",
+                borderColor: "rgba(148, 163, 184, 0.28)",
+                borderWidth: 1,
+                padding: 12,
+                callbacks: {
+                  label: function (context) {
+                    return `${context.dataset.label}: ${formatNumber(context.parsed.y)} ${getUnitLabel(filters.unit)}`;
+                  },
+                  footer: function (tooltipItems) {
+                    const item = tooltipItems[0];
+                    const bucket = data.buckets[item.dataIndex];
+                    if (!bucket) {
+                      return "";
+                    }
+                    return `Logged days: ${bucket.logged_days} | Items: ${bucket.items}`;
+                  },
+                },
+              },
+            },
+          },
+          plugins: [{
+            id: "hydrate-datasets",
+            beforeInit(chart) {
+              chart.data.datasets = datasetsBuilder[filters.chartView](chart, data, filters);
+            },
+          }],
+        });
+      }
+
       async function fetchAndRenderCaloriesChart() {
+        const filters = getDashboardFilters();
+
         try {
-          const range = document.getElementById("timeRangeSelect").value;
-          const dayType = document.getElementById("dayTypeSelect").value;
-          const unit = document.getElementById("unitSelect").value;
-          
-          const response = await fetch(`/dashboard/calories_chart_data?range=${range}&dayType=${dayType}&unit=${unit}`);
+          const response = await fetch(buildChartUrl(filters));
           if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
           }
           const data = await response.json();
-
-          const ctx = document.getElementById("caloriesChart").getContext("2d");
-
-          if (caloriesChartInstance) {
-            caloriesChartInstance.destroy();
-          }
-
-          const datasets = data.datasets.map((dataset) => ({
-            label: dataset.label,
-            backgroundColor: dataset.backgroundColor,
-            data: dataset.data,
-          }));
-
-          caloriesChartInstance = new Chart(ctx, {
-            type: "bar",
-            data: {
-              labels: data.labels,
-              datasets: datasets,
-            },
-            options: {
-              responsive: true,
-              maintainAspectRatio: false,
-              scales: {
-                x: {
-                  stacked: true,
-                  title: {
-                    display: true,
-                    text: "Date",
-                  },
-                },
-                y: {
-                  stacked: true,
-                  beginAtZero: true,
-                  title: {
-                    display: true,
-                    text: document.getElementById("unitSelect").value === "g" ? "Weight (g)" : "Energy (kcal)",
-                  },
-                },
-              },
-              plugins: {
-                legend: {
-                  position: "bottom",
-                  labels: {
-                    usePointStyle: true,
-                  },
-                },
-                tooltip: {
-                  mode: "index",
-                  intersect: false,
-                  callbacks: {
-                    label: function (context) {
-                      let label = context.dataset.label || "";
-                      if (label) {
-                        label += ": ";
-                      }
-                      if (context.parsed.y !== null) {
-                        label += context.parsed.y + " kcal";
-                      }
-                      return label;
-                    },
-                  },
-                },
-              },
-            },
-          });
+          renderIntakeChart(data, filters);
         } catch (error) {
           console.error("Error fetching or rendering calories chart:", error);
-          const chartContainer =
-            document.getElementById("caloriesChart").parentNode;
-          chartContainer.innerHTML =
-            '<p class="status-message-error">Failed to load chart data.</p>';
+          updateChartEmptyState(false);
+          document.getElementById("chartSubheading").textContent =
+            "We hit an error while loading the trend view.";
         }
       }
 
@@ -302,8 +642,7 @@
 
           document.getElementById("summary-target-kcal").innerText = target;
           document.getElementById("summary-consumed-kcal").innerText = consumed;
-          document.getElementById("summary-remaining-kcal").innerText =
-            remaining;
+          document.getElementById("summary-remaining-kcal").innerText = remaining;
 
           energySummaryChartInstance = new Chart(ctx, {
             type: "doughnut",
@@ -312,7 +651,9 @@
               datasets: [
                 {
                   data: [consumed, remaining],
-                  backgroundColor: ["#FDD835", "#B0BEC5"],
+                  backgroundColor: ["#f59e0b", "#dbe4f0"],
+                  borderColor: ["#fbbf24", "#e2e8f0"],
+                  borderWidth: 0,
                   hoverOffset: 4,
                 },
               ],
@@ -320,22 +661,20 @@
             options: {
               responsive: true,
               maintainAspectRatio: false,
-              cutout: "80%",
+              cutout: "76%",
               plugins: {
                 legend: {
                   position: "bottom",
+                  labels: {
+                    usePointStyle: true,
+                    padding: 16,
+                    color: "#334155",
+                  },
                 },
                 tooltip: {
                   callbacks: {
                     label: function (context) {
-                      let label = context.label || "";
-                      if (label) {
-                        label += ": ";
-                      }
-                      if (context.parsed) {
-                        label += context.parsed + " kcal";
-                      }
-                      return label;
+                      return `${context.label}: ${formatNumber(context.parsed)} kcal`;
                     },
                   },
                 },
@@ -343,14 +682,7 @@
             },
           });
         } catch (error) {
-          console.error(
-            "Error fetching or rendering energy summary chart:",
-            error
-          );
-          const chartContainer =
-            document.getElementById("energySummaryChart").parentNode;
-          chartContainer.innerHTML =
-            '<p class="status-message-error">Failed to load summary data.</p>';
+          console.error("Error fetching or rendering energy summary chart:", error);
         }
       }
 
@@ -377,48 +709,43 @@
           const fatConsumed = data.consumed_fat;
           const fatTarget = data.target_fat;
 
-          document.getElementById("summary-protein").innerText =
-            proteinConsumed;
-          document.getElementById("summary-protein-target").innerText =
-            proteinTarget;
+          document.getElementById("summary-protein").innerText = proteinConsumed;
+          document.getElementById("summary-protein-target").innerText = proteinTarget;
           document.getElementById("summary-carbs").innerText = carbsConsumed;
-          document.getElementById("summary-carbs-target").innerText =
-            carbsTarget;
+          document.getElementById("summary-carbs-target").innerText = carbsTarget;
           document.getElementById("summary-fat").innerText = fatConsumed;
           document.getElementById("summary-fat-target").innerText = fatTarget;
 
           macroSummaryChartInstance = new Chart(ctx, {
             type: "bar",
             data: {
-              labels: [
-                "Protein",
-                "Carbs",
-                "Fat"
-              ],
+              labels: ["Protein", "Carbs", "Fat"],
               datasets: [
                 {
                   label: "Target",
                   data: [proteinTarget, carbsTarget, fatTarget],
-                  backgroundColor: "rgba(158, 158, 158, 0.4)",
-                  borderColor: "#9E9E9E",
+                  backgroundColor: "rgba(148, 163, 184, 0.25)",
+                  borderColor: "#94a3b8",
                   borderWidth: 1,
-                  borderRadius: 4
+                  borderRadius: 10,
+                  borderSkipped: false,
                 },
                 {
                   label: "Consumed",
                   data: [proteinConsumed, carbsConsumed, fatConsumed],
                   backgroundColor: [
-                    "rgba(139, 195, 74, 0.9)",
-                    "rgba(3, 169, 244, 0.9)",
-                    "rgba(255, 87, 34, 0.9)"
+                    "rgba(132, 204, 22, 0.92)",
+                    "rgba(14, 165, 233, 0.92)",
+                    "rgba(249, 115, 22, 0.92)"
                   ],
                   borderColor: [
-                    "#689F38",
-                    "#0288D1",
-                    "#E64A19"
+                    "#65a30d",
+                    "#0284c7",
+                    "#ea580c"
                   ],
                   borderWidth: 1,
-                  borderRadius: 4
+                  borderRadius: 10,
+                  borderSkipped: false,
                 }
               ]
             },
@@ -428,20 +755,39 @@
               scales: {
                 y: {
                   beginAtZero: true,
+                  grid: {
+                    color: "rgba(148, 163, 184, 0.18)",
+                    drawBorder: false,
+                  },
+                  ticks: {
+                    color: "#64748b",
+                  },
                   title: {
                     display: true,
                     text: "Grams (g)"
                   }
-                }
+                },
+                x: {
+                  grid: {
+                    display: false,
+                  },
+                  ticks: {
+                    color: "#475569",
+                  },
+                },
               },
               plugins: {
                 legend: {
                   position: "top",
+                  labels: {
+                    usePointStyle: true,
+                    color: "#334155",
+                  },
                 },
                 tooltip: {
                   callbacks: {
                     label: function (context) {
-                      return context.dataset.label + ": " + context.parsed.y + " g";
+                      return `${context.dataset.label}: ${context.parsed.y} g`;
                     },
                   },
                 },
@@ -449,24 +795,26 @@
             },
           });
         } catch (error) {
-          console.error(
-            "Error fetching or rendering macro summary chart:",
-            error
-          );
-          const chartContainer =
-            document.getElementById("macroSummaryChart").parentNode;
-          chartContainer.innerHTML =
-            '<p class="status-message-error">Failed to load macro summary data.</p>';
+          console.error("Error fetching or rendering macro summary chart:", error);
         }
       }
+
       document.addEventListener("DOMContentLoaded", () => {
         fetchAndRenderCaloriesChart();
         fetchAndRenderEnergySummaryChart();
         fetchAndRenderMacroSummaryChart();
 
-        const controls = ["timeRangeSelect", "dayTypeSelect", "unitSelect"];
-        controls.forEach(id => {
-            document.getElementById(id).addEventListener("change", fetchAndRenderCaloriesChart);
+        const controls = [
+          "timeRangeSelect",
+          "dayTypeSelect",
+          "unitSelect",
+          "chartViewSelect",
+          "groupBySelect",
+          "coverageSelect",
+        ];
+
+        controls.forEach((id) => {
+          document.getElementById(id).addEventListener("change", fetchAndRenderCaloriesChart);
         });
       });
     </script>
