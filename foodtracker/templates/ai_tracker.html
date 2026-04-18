@@ -6,113 +6,17 @@
     <title>AI Tracker - Food Prediction</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='bs/css/united.min.css') }}" />
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}" />
-    <style>
-        body { font-family: Arial, sans-serif; background-color: #f8f9fa; color: #333; }
-         .chart-container {
-            position: relative;
-            height: 400px; /* Fixed height for bar chart */
-            width: 100%;
-            padding: 15px;
-            box-sizing: border-box;
-        }
-        .chart-section {
-            background-color: #fff;
-            padding: 25px;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            margin-bottom: 30px;
-            border: 1px solid #e9ecef;
-        }
-        .stat-item { text-align: center; padding: 10px; }
-        .stat-value { font-size: 1.8rem; font-weight: bold; color: #0d6efd; }
-        .stat-label { font-size: 1rem; color: #6c757d; }
-        .loading, .error { text-align: center; padding: 20px; font-size: 1.1em; }
-        .loading { color: #6c757d; }
-        .error { color: #dc3545; }
-
-        .chatbot-container {
-            background-color: #f0f2f5;
-            border-radius: 12px;
-            padding: 20px;
-            box-shadow: inset 0 0 8px rgba(0,0,0,0.1);
-            height: 500px; /* Fixed height for chat window */
-            display: flex;
-            flex-direction: column;
-        }
-        .chat-messages {
-            flex-grow: 1;
-            overflow-y: auto;
-            border-bottom: 1px solid #e0e0e0;
-            padding-bottom: 10px;
-            margin-bottom: 10px;
-        }
-            .animated-border {
-    position: relative;
-    overflow: hidden;
-}
-
-.animated-border::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 2px;
-    background: linear-gradient(90deg, transparent, rgba(150, 255, 187, 0.8), transparent);
-    animation: borderSlide 3s linear infinite;
-}
-@keyframes borderSlide {
-    0% {
-        left: -100%;
-    }
-
-    100% {
-        left: 100%;
-    }
-}
-        .message {
-            padding: 8px 12px;
-            border-radius: 15px;
-            margin-bottom: 8px;
-            max-width: 80%;
-            word-wrap: break-word;
-        }
-        .message.user {
-            background-color: #0d6efd;
-            color: white;
-            margin-left: auto;
-            border-bottom-right-radius: 5px;
-        }
-        .message.bot {
-            background-color: #e9ecef;
-            color: #333;
-            margin-right: auto;
-            border-bottom-left-radius: 5px;
-        }
-        .chat-input-form {
-            display: flex;
-        }
-        .chat-input-form input {
-            flex-grow: 1;
-            padding: 10px;
-            border-radius: 20px;
-            border: 1px solid #e0e0e0;
-            margin-right: 10px;
-        }
-        .chat-input-form button {
-            border-radius: 20px;
-            padding: 10px 15px;
-        }
-    </style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/ai-tracker.css') }}" />
 </head>
-<body>
+<body class="ai-tracker-page">
     <div class="container-fluid" id="wrapper">
 			
 			<div class="row" id="homeJumbo">
 				<div class="overlay"></div>
 				<div class="col-lg-12">
 					<h1>
-						<a href="{{ url_for('main.dashboard') }}" style="border: 2px solid white; border-radius: 5px; padding: 5px 10px; display: inline-block;">AI TRACKER</a>
+						<a href="{{ url_for('main.dashboard') }}" class="brand-badge-link">AI TRACKER</a>
 					</h1>
 					
 					<div class="row t20">
@@ -139,26 +43,12 @@
 							  <li role="presentation" class='active'>
 							  	<a href="{{ url_for('auth.logout') }}" title="Add Food Item">Logout</a>
 							  </li>
-                              <div
-                  style="
-                    position: absolute;
-                    top: -45px;
-                    right: -364px;
-                    font-size: 16px;
-                    color: white;
-                    border: 2px solid #3b82f6;
-                    border-radius: 25px;
-                    padding: 4px 16px;
-                    background-color: rgba(59, 130, 246, 0.15);
-                    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-                  "
-                >
-                  <div class="navbar-username" style="list-style: none; margin: 0; padding: 0;">
-                    <a style="color: white; text-decoration: none; font-weight: bold;">
+                              <div class="user-badge">
+                  <div class="navbar-username">
+                    <a>
                       <span
                         class="glyphicon glyphicon-user"
                         aria-hidden="true"
-                        style="margin-right: 5px;"
                       ></span>
                       {{ current_user.username }}
                     </a>
@@ -186,8 +76,8 @@
                         <h3 class="text-center mb-4">Daily Calorie Prediction</h3>
                         <div id="prediction-results-container" class="text-center">
                             <div class="loading" id="prediction-loading-message">Loading prediction...</div>
-                            <div class="error" id="prediction-error-message" style="display: none;"></div>
-                            <div id="prediction-content" style="display: none;">
+                            <div class="error is-hidden" id="prediction-error-message"></div>
+                            <div id="prediction-content" class="is-hidden">
                                 <div class="row text-center my-3">
                                     <div class="col-md-6 mb-3">
                                         <div class="stat-item">

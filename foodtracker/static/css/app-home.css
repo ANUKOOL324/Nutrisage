@@ -1,0 +1,93 @@
+html,
+body {
+    height: 100%;
+}
+
+#wrapper.app-home {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.main-content-section {
+    flex: 1;
+    min-height: 300px;
+}
+
+.hero-grid-band {
+    margin-top: -20px;
+    margin-bottom: 30px;
+    padding: 30px 0 40px;
+    background-color: #f4f9ff;
+    background-image:
+        linear-gradient(to right, #dbeafe 1px, transparent 1px),
+        linear-gradient(to bottom, #dbeafe 1px, transparent 1px);
+    background-attachment: fixed;
+    background-size: 20px 20px;
+    border-bottom: 3px dotted #93c5fd;
+}
+
+.soft-panel {
+    overflow: hidden;
+    border: 1px solid #f0f0f0;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.soft-panel:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+}
+
+.soft-panel .panel-body {
+    padding: 15px 20px;
+    background-color: #fafafa;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.glass-panel {
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    background: rgba(255, 255, 255, 0.4);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.05);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+}
+
+.glass-panel .panel-body {
+    background: transparent;
+    border: 0;
+}
+
+.add-date-label {
+    color: #333;
+}
+
+.date-input-surface {
+    background: rgba(255, 255, 255, 0.7);
+    border-color: #dbeafe;
+}
+
+.date-display {
+    color: #333;
+    font-size: 15px;
+}
+
+.list-group-item {
+    padding: 12px 20px;
+    color: #555;
+    border: 0;
+    border-bottom: 1px solid #f9f9f9;
+}
+
+.list-group-item:last-child {
+    border-bottom: 0;
+}
+
+.badge-calories {
+    background-color: #10b981;
+}
+
+.quote-line {
+    text-align: center;
+}

@@ -15,107 +15,12 @@
       rel="stylesheet"
       href="{{ url_for('static', filename='styles.css') }}"
     />
-
-    <style>
-      body {
-        font-family: Arial, sans-serif;
-        margin: 0;
-        background-color: #f4f7f6;
-        color: #333;
-      }
-
-      .container-fluid {
-        padding-right: 15px;
-        padding-left: 15px;
-        margin-right: auto;
-        margin-left: auto;
-      }
-      .navbar {
-        margin-bottom: 20px;
-      }
-      .chart-section {
-        background-color: #fff;
-        padding: 25px;
-        border-radius: 8px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        margin-bottom: 30px;
-      }
-      h2,
-      h3 {
-        text-align: center;
-        color: #555;
-        margin-bottom: 20px;
-      }
-      .chart-container {
-        position: relative;
-        height: 400px; /* Fixed height for bar chart */
-        width: 100%;
-        padding: 15px;
-        box-sizing: border-box;
-      }
-      .doughnut-chart-container {
-        position: relative;
-        height: 300px; /* Fixed height for doughnut chart */
-        width: 50%; /* Adjust width for doughnut chart */
-        margin: 0 auto; /* Center the doughnut chart */
-        padding: 15px;
-        box-sizing: border-box;
-      }
-      .controls {
-        display: flex;
-        justify-content: flex-end;
-        gap: 10px;
-        margin-bottom: 15px;
-      }
-      .controls select,
-      .controls button {
-        padding: 8px 12px;
-        border: 1px solid #ddd;
-        border-radius: 4px;
-        background-color: #f9f9f9;
-        cursor: pointer;
-      }
-      .controls button {
-        background-color: #007bff;
-        color: white;
-        border-color: #007bff;
-      }
-      .controls button:hover {
-        background-color: #0056b3;
-      }
-      .flash-messages {
-        margin-bottom: 15px;
-        text-align: center;
-      }
-      .alert {
-        padding: 15px;
-        margin-bottom: 20px;
-        border: 1px solid transparent;
-        border-radius: 4px;
-      }
-      .alert-success {
-        color: #3c763d;
-        background-color: #dff0d8;
-        border-color: #d6e9c6;
-      }
-      .alert-danger {
-        color: #a94442;
-        background-color: #f2dede;
-        border-color: #ebccd1;
-      }
-      .alert-warning {
-        color: #8a6d3b;
-        background-color: #fcf8e3;
-        border-color: #faebcc;
-      }
-      .alert-info {
-        color: #31708f;
-        background-color: #d9edf7;
-        border-color: #bce8f1;
-      }
-    </style>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/dashboard.css') }}"
+    />
   </head>
-  <body>
+  <body class="dashboard-page">
     <div class="container-fluid" id="wrapper">
       <div class="row" id="homeJumbo">
         <div class="overlay"></div>
@@ -123,12 +28,7 @@
           <h1>
             <a
               href="{{ url_for('main.dashboard') }}"
-              style="
-                border: 2px solid white;
-                border-radius: 5px;
-                padding: 5px 10px;
-                display: inline-block;
-              "
+              class="brand-badge-link"
               >DASHBOARD</a
             >
           </h1>
@@ -171,26 +71,12 @@
                     >Logout</a
                   >
                 </li>
-                <div
-                  style="
-                    position: absolute;
-                    top: -45px;
-                    right: -364px;
-                    font-size: 16px;
-                    color: white;
-                    border: 2px solid #3b82f6;
-                    border-radius: 25px;
-                    padding: 4px 16px;
-                    background-color: rgba(59, 130, 246, 0.15);
-                    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-                  "
-                >
-                  <div class="navbar-username" style="list-style: none; margin: 0; padding: 0;">
-                    <a style="color: white; text-decoration: none; font-weight: bold;">
+                <div class="user-badge">
+                  <div class="navbar-username">
+                    <a>
                       <span
                         class="glyphicon glyphicon-user"
                         aria-hidden="true"
-                        style="margin-right: 5px;"
                       ></span>
                       {{ current_user.username }}
                     </a>
@@ -283,7 +169,7 @@
                 <option value="kcal">kcal</option>
                 <option value="g">grams</option>
               </select>
-              <button title="More Options">•••</button>
+              <button title="More Options">...</button>
             </div>
             <div class="chart-container">
               <canvas id="caloriesChart"></canvas>
@@ -301,12 +187,9 @@
       </footer>
     </div>
 
-    <!-- jQuery -->
     <script src="{{ url_for('static', filename='bs/js/jquery.min.js') }}"></script>
-    <!-- Bootstrap JavaScript -->
     <script src="{{ url_for('static', filename='bs/js/bootstrap.min.js') }}"></script>
 
-    <!--i have don't use different js file because it was easy for me to check mistakes here-->
     <script>
       let caloriesChartInstance = null;
       let energySummaryChartInstance = null;
@@ -358,7 +241,7 @@
                   beginAtZero: true,
                   title: {
                     display: true,
-                    text: document.getElementById("unitSelect").value === 'g' ? "Weight (g)" : "Energy (kcal)",
+                    text: document.getElementById("unitSelect").value === "g" ? "Weight (g)" : "Energy (kcal)",
                   },
                 },
               },
@@ -393,7 +276,7 @@
           const chartContainer =
             document.getElementById("caloriesChart").parentNode;
           chartContainer.innerHTML =
-            '<p style="text-align: center; color: red;">Failed to load chart data.</p>';
+            '<p class="status-message-error">Failed to load chart data.</p>';
         }
       }
 
@@ -467,7 +350,7 @@
           const chartContainer =
             document.getElementById("energySummaryChart").parentNode;
           chartContainer.innerHTML =
-            '<p style="text-align: center; color: red;">Failed to load summary data.</p>';
+            '<p class="status-message-error">Failed to load summary data.</p>';
         }
       }
 
@@ -573,7 +456,7 @@
           const chartContainer =
             document.getElementById("macroSummaryChart").parentNode;
           chartContainer.innerHTML =
-            '<p style="text-align: center; color: red;">Failed to load macro summary data.</p>';
+            '<p class="status-message-error">Failed to load macro summary data.</p>';
         }
       }
       document.addEventListener("DOMContentLoaded", () => {
@@ -581,7 +464,6 @@
         fetchAndRenderEnergySummaryChart();
         fetchAndRenderMacroSummaryChart();
 
-        // Wire up control event listeners to dynamically re-render
         const controls = ["timeRangeSelect", "dayTypeSelect", "unitSelect"];
         controls.forEach(id => {
             document.getElementById(id).addEventListener("change", fetchAndRenderCaloriesChart);

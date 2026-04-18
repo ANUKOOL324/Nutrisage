@@ -13,99 +13,18 @@
       rel="stylesheet"
       href="{{ url_for('static', filename='styles.css') }}"
     />
-    <style>
-      html,
-      body {
-        height: 100%;
-        margin: 0;
-        padding: 0;
-      }
-
-      /* Wrapper to use flexbox for layout */
-      #wrapper {
-        min-height: 100vh;
-        display: flex;
-        flex-direction: column;
-      }
-
-      /* Main content should expand to fill available space */
-      .main-content-section {
-        flex: 1;
-        min-height: 300px; /* Ensure some minimum space */
-      }
-
-      /* Simple style to visually separate the footer section */
-      .footer-section {
-        background-color: #f8f9fa; /* A light grey background */
-        padding-top: 20px;
-        margin-top: auto; /* This pushes the footer to the bottom */
-        border-top: 1px solid #e7e7e7;
-        flex-shrink: 0; /* Prevent the footer from shrinking */
-      }
-
-      /* Style for the non-clickable username in the navbar */
-      .navbar-username a {
-        pointer-events: none;
-        color: white !important;
-        font-weight: bold;
-      }
-
-      /* Add some spacing after the header */
-      #homeJumbo {
-        margin-bottom: 40px;
-      }
-      
-      /* Subtle Card Design Enhancements */
-      .panel {
-        border-radius: 10px;
-        border: 1px solid #f0f0f0;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.03);
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
-        overflow: hidden; /* Ensures child elements respect border-radius */
-      }
-      .panel:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 8px 20px rgba(0,0,0,0.08);
-      }
-      .panel-body {
-        background-color: #fafafa;
-        border-bottom: 1px solid #f0f0f0;
-        padding: 15px 20px;
-      }
-      .date-display {
-        font-size: 15px;
-        color: #333;
-      }
-      .list-group-item {
-        border: none;
-        border-bottom: 1px solid #f9f9f9;
-        padding: 12px 20px;
-        color: #555;
-      }
-      .list-group-item:last-child {
-        border-bottom: none;
-      }
-      .badge-calories {
-        background-color: #10b981; /* A nice modern green for the calories badge */
-      }
-    </style>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/app-home.css') }}"
+    />
   </head>
   <body>
-    <div class="container-fluid" id="wrapper">
+    <div class="container-fluid app-home" id="wrapper">
       <div class="row" id="homeJumbo">
         <div class="overlay"></div>
         <div class="col-lg-12">
           <h1>
-            <a
-              href="{{ url_for('main.dashboard') }}"
-              style="
-                border: 2px solid white;
-                border-radius: 5px;
-                padding: 5px 10px;
-                display: inline-block;
-              "
-              >NUTRISAGE</a
-            >
+            <a href="{{ url_for('main.dashboard') }}" class="brand-badge-link">NUTRISAGE</a>
           </h1>
 
           <div class="row t20">
@@ -146,26 +65,12 @@
                     >Logout</a
                   >
                 </li>
-                <div
-                  style="
-                    position: absolute;
-                    top: -45px;
-                    right: -364px;
-                    font-size: 16px;
-                    color: white;
-                    border: 2px solid #3b82f6;
-                    border-radius: 25px;
-                    padding: 4px 16px;
-                    background-color: rgba(59, 130, 246, 0.15);
-                    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-                  "
-                >
-                  <div class="navbar-username" style="list-style: none; margin: 0; padding: 0;">
-                    <a style="color: white; text-decoration: none; font-weight: bold;">
+                <div class="user-badge">
+                  <div class="navbar-username">
+                    <a>
                       <span
                         class="glyphicon glyphicon-user"
                         aria-hidden="true"
-                        style="margin-right: 5px;"
                       ></span>
                       {{ current_user.username }}
                     </a>
@@ -190,49 +95,29 @@
         </div>
       </div>
       <div class="main-content-section">
-        <!-- Distinct Top Grid Area stopping exactly at the dotted line -->
-        <div style="
-          background-color: #f4f9ff; 
-          background-image: 
-            linear-gradient(to right, #dbeafe 1px, transparent 1px), 
-            linear-gradient(to bottom, #dbeafe 1px, transparent 1px); 
-          background-size: 20px 20px; 
-          background-attachment: fixed; 
-          padding: 30px 0 40px 0;
-          margin-top: -20px;
-          margin-bottom: 30px;
-          border-bottom: 3px dotted #93c5fd;
-        ">
+        <div class="hero-grid-band">
           <div class="row">
             <div class="col-lg-4 col-lg-offset-4">
-              <!-- Transparent Glass Card -->
-              <div class="panel panel-default" style="
-                border: 1px solid rgba(255, 255, 255, 0.6); 
-                box-shadow: 0 8px 32px rgba(0,0,0,0.05); 
-                background: rgba(255, 255, 255, 0.4); 
-                backdrop-filter: blur(8px);
-                -webkit-backdrop-filter: blur(8px);
-              ">
-                <div class="panel-body" style="background: transparent; border: none;">
+              <div class="panel panel-default soft-panel glass-panel">
+                <div class="panel-body">
                   <form
                     action="{{ url_for('main.create_log') }}"
                     method="POST"
                     role="form"
                   >
                     <div class="form-group">
-                      <label style="color: #333;"
+                      <label class="add-date-label"
                         ><i class="glyphicon glyphicon-plus-sign"></i> Add New
                         Date</label
                       >
                       <div class="input-group">
                         <input
                           type="date"
-                          class="form-control"
+                          class="form-control date-input-surface"
                           name="date"
                           placeholder="Select New Date"
                           aria-label="date"
                           aria-describedby="add-btn"
-                          style="background: rgba(255,255,255,0.7); border-color: #dbeafe;"
                         />
                         <span class="input-group-btn">
                           <button
@@ -256,14 +141,13 @@
         <div class="row t20">
           {% for log_date in row %}
           <div class="col-lg-3">
-            <div class="panel panel-warning">
+            <div class="panel panel-warning soft-panel">
               <div
                 class="panel-body text-bold"
                 data-log-id="{{ log_date['log_date'].id }}"
               >
                 <div
-                  class="date-container"
-                  style="display: inline-block; cursor: pointer"
+                  class="date-container display-inline-block cursor-pointer"
                 >
                   <span class="date-display">
                     <i class="glyphicon glyphicon-calendar"></i>
@@ -271,16 +155,15 @@
                   </span>
                   <input
                     type="date"
-                    class="date-input"
+                    class="date-input hidden-date-input"
                     value="{{ log_date['log_date'].date.strftime('%Y-%m-%d') }}"
-                    style="display: none"
                   />
                 </div>
                 <div class="pull-right">
                   <form
                     action="{{ url_for('main.delete_log', log_id=log_date['log_date'].id) }}"
                     method="POST"
-                    style="display: inline"
+                    class="inline-form"
                     onsubmit="return confirm('Are you sure you want to delete this entire log?');"
                   >
                     <button type="submit" class="btn btn-danger btn-xs">
@@ -315,15 +198,15 @@
         </div>
         {% endfor %}
       </div>
-      <div class="footer-section">
+      <div class="footer-block">
         <div class="row t20">
           <div class="col-lg-12">
-            <div class="panel panel-default">
+            <div class="panel panel-default soft-panel">
               <div class="panel-body">
                 <h4 class="text-center text-black">About Nutrisage</h4>
                 <div class="row t10">
-                  <div style="text-align: center">
-                    "Let food be thy medicine and medicine be thy food." –
+                  <div class="quote-line">
+                    "Let food be thy medicine and medicine be thy food." &ndash;
                     Hippocrates
                   </div>
                   <div class="row t20">
@@ -333,7 +216,7 @@
                           <a
                             href="https://pmc.ncbi.nlm.nih.gov/articles/PMC6695930/pdf/sensors-19-03265.pdf"
                             title="Home"
-                            style="color: Grey"
+                            class="muted-link"
                             >Blog</a
                           >
                         </li>
@@ -341,7 +224,7 @@
                           <a
                             href="https://github.com/ANUKOOL324"
                             title="AI Tracker"
-                            style="color: Grey"
+                            class="muted-link"
                             >Github</a
                           >
                         </li>

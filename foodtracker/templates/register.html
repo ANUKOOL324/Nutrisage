@@ -7,148 +7,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --primary: #10b981; /* Emerald Green */
-            --primary-glow: rgba(16, 185, 129, 0.3);
-            --bg-dark: #050505;
-            --text-main: #f8fafc;
-            --text-muted: #94a3b8;
-            --grid-color: rgba(16, 185, 129, 0.08);
-            --glass-border: rgba(255, 255, 255, 0.08);
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--bg-dark);
-            color: var(--text-main);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background-image: 
-                linear-gradient(var(--grid-color) 1px, transparent 1px),
-                linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
-            background-size: 50px 50px;
-            background-position: center center;
-        }
-
-        .auth-container {
-            width: 100%;
-            max-width: 420px;
-            padding: 40px;
-            background: rgba(0, 0, 0, 0.6);
-            backdrop-filter: blur(12px);
-            border: 1px solid var(--glass-border);
-            border-radius: 20px;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-        }
-
-        .logo-text {
-            font-family: 'Instrument Serif', serif;
-            font-size: 2.5rem;
-            color: #fff;
-            text-align: center;
-            margin-bottom: 8px;
-            text-decoration: none;
-            display: block;
-        }
-
-        .sub-heading {
-            text-align: center;
-            color: var(--text-muted);
-            margin-bottom: 32px;
-            font-size: 0.95rem;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-group label {
-            display: block;
-            font-size: 0.85rem;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            margin-bottom: 8px;
-            color: var(--text-muted);
-        }
-
-        .form-group input {
-            width: 100%;
-            padding: 14px 16px;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid var(--glass-border);
-            border-radius: 12px;
-            color: #fff;
-            font-family: inherit;
-            font-size: 1rem;
-            transition: all 0.3s ease;
-        }
-
-        .form-group input:focus {
-            outline: none;
-            border-color: var(--primary);
-            background: rgba(255, 255, 255, 0.08);
-            box-shadow: 0 0 0 4px var(--primary-glow);
-        }
-
-        .btn-submit {
-            width: 100%;
-            padding: 16px;
-            background: var(--primary);
-            color: #000;
-            border: none;
-            border-radius: 12px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin-top: 10px;
-        }
-
-        .btn-submit:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px var(--primary-glow);
-            filter: brightness(1.1);
-        }
-
-        .toggle-text {
-            text-align: center;
-            margin-top: 24px;
-            font-size: 0.95rem;
-            color: var(--text-muted);
-        }
-
-        .toggle-text a {
-            color: var(--primary);
-            text-decoration: none;
-            font-weight: 600;
-            transition: color 0.3s;
-        }
-        
-        .toggle-text a:hover {
-            color: #fff;
-        }
-
-        .flash-msg {
-            padding: 12px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            font-size: 0.9rem;
-            text-align: center;
-        }
-        .flash-msg.danger { background: rgba(239, 68, 68, 0.1); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.2); }
-        .flash-msg.success { background: rgba(16, 185, 129, 0.1); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.2); }
-    </style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/auth.css') }}" />
 </head>
-<body>
+<body class="auth-page">
     <div class="auth-container">
         <a href="/" class="logo-text">Nutrisage</a>
         <p class="sub-heading">Start your health journey today.</p>
@@ -172,7 +33,7 @@
             </div>
             <div class="form-group">
                 <label>Password</label>
-                <input type="password" name="password" placeholder="••••••••" required />
+                <input type="password" name="password" placeholder="&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;" required />
             </div>
             <button type="submit" class="btn-submit">Get Started</button>
         </form>
