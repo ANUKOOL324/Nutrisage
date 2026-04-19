@@ -1,6 +1,5 @@
 import os
 from datetime import timedelta
-
 import joblib
 import pandas as pd
 from sklearn.compose import ColumnTransformer
